@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted, onUnmounted, computed } from 'vue'
-import uhrzeit from '@/components/Uhrzeit.vue'
-import navigation from '@/components/navigation.vue'
+import Uhrzeit from '../components/Uhrzeit.vue'
+import navigation from '../components/navigation.vue'
 
 //--> Buttons <--
 const isRunning = ref(false)
@@ -39,7 +39,7 @@ const buttonStyle = computed(() => ({
      <navigation></navigation>
   
       <main class="content">
-      <uhrzeit></uhrzeit>
+      <Uhrzeit></Uhrzeit>
         <div class="timer-box">
             <h1 class="title">Zeiterfassung</h1>
             <h2 class="title">{{ formattedTime }}</h2>

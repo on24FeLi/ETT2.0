@@ -1,6 +1,7 @@
 <script setup>
 import { ref, onMounted, onUnmounted, computed } from 'vue'
-import uhrzeit from '@/components/uhrzeit.vue'
+import uhrzeit from '@/components/Uhrzeit.vue'
+import navigation from '@/components/navigation.vue'
 
 //--> Buttons <--
 const isRunning = ref(false)
@@ -35,13 +36,7 @@ const buttonStyle = computed(() => ({
 </script>
 <template>
     <div class="wrapper">
-      <header class="header">
-        <nav class="nav-bar">
-          <a href="#">Tagesanzeige</a>
-          <a href="#">Übersicht</a>
-          <a href="#">Einstellungen</a>
-        </nav>
-      </header>
+     <navigation></navigation>
   
       <main class="content">
       <uhrzeit></uhrzeit>

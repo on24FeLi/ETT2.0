@@ -5,7 +5,7 @@
         <nav class="nav-bar">
           <a href="#">Tagesanzeige</a>
           <a href="#">Übersicht</a>
-          <a href="#">Einstellungen</a>
+          <a href="../views/Dashboard.vue">Dashboard</a>
         </nav>
       </header>
 </template>

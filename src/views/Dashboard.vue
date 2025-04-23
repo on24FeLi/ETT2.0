@@ -1,7 +1,32 @@
+<script setup>
+  import { ref } from 'vue';
+  import navigation from '@/components/navigation.vue'
+  
+  const showForm = ref(false);
+  
+  const form = ref({
+    name: '',
+    vorname: '',
+    email: '',
+    password: '',
+    isHR: false
+  });
+  
+  function toggleForm() {
+    showForm.value = !showForm.value;
+  }
+  
+  function submitForm() {
+    console.log('Mitarbeiterdaten:', form.value);
+    toggleForm();
+  }
+  </script>
+
 <template>
     <div>
       <header>
         <h1>Dashboard</h1>
+        <navigation></navigation>
         <div class="logo">
           🕒 <span>ETT</span>
         </div>
@@ -65,29 +90,6 @@
       </div>
     </div>
   </template>
-  
-  <script setup>
-  import { ref } from 'vue';
-  
-  const showForm = ref(false);
-  
-  const form = ref({
-    name: '',
-    vorname: '',
-    email: '',
-    password: '',
-    isHR: false
-  });
-  
-  function toggleForm() {
-    showForm.value = !showForm.value;
-  }
-  
-  function submitForm() {
-    console.log('Mitarbeiterdaten:', form.value);
-    toggleForm();
-  }
-  </script>
   
   <style scoped>
   body {

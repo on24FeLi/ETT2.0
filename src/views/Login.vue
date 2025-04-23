@@ -11,13 +11,19 @@ const userName = ref('')
 const passWord = ref('')
 const loginError = ref('')
 
+
 onMounted(() => {
-  const savedUsers = localStorage.getItem('users')
-  if (savedUsers) {
-    users.length = 0
-    users.push(...JSON.parse(savedUsers))
+  // Prüfe, ob im localStorage schon User gespeichert sind
+  const savedUsers = localStorage.getItem('users');
+  if (!savedUsers) {
+    // Falls nicht: Schreibe die Standard-User aus dem Code hinein
+    localStorage.setItem('users', JSON.stringify(users));
+  } else {
+    // Falls ja: Überschreibe das users-Array im Code, damit alles synchron bleibt
+    users.length = 0;
+    users.push(...JSON.parse(savedUsers));
   }
-})
+});
 function userLogin() {
   const user = users.find(
     u => u.email === userName.value && u.passwort === passWord.value)

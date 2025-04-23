@@ -16,7 +16,11 @@ const users = [
     isHR: true
   }
 ]
-
+const storedUsers = localStorage.getItem('users');
+if (storedUsers) {
+  users.length = 0;
+  users.push(...JSON.parse(storedUsers));
+}
 let nextId = users.length + 1
 
 function addUser(nachname, vorname, email, passwort, isHR  = false) {

@@ -19,7 +19,7 @@
   }
   const userList = ref(users)
   function submitForm() {
-    function submitForm() {
+  
   // Validierung optional
   if (!form.value.nachname || !form.value.vorname || !form.value.email || !form.value.password) {
     alert('Bitte alle Felder ausfüllen!');
@@ -36,6 +36,7 @@
 
   console.log('Mitarbeiter hinzugefügt:', form.value);
 
+  console.log('addUser wurde ausgeführt');
   // Formular zurücksetzen
   form.value = {
     nachname: '',
@@ -47,8 +48,6 @@
 
   toggleForm(); // Formular schließen
 }
-    toggleForm();
-  }
   </script>
 
 <template>

@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from 'vue'
-import uhrzeit from '@/components/uhrzeit.vue'
+import uhrzeit from '@/components/Uhrzeit.vue'
 import navigation from '@/components/navigation.vue'
 const userName = ref('')
 const passWord = ref('')

@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, onUnmounted, computed } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import Uhrzeit from '@/components/Uhrzeit.vue'
 import navigation from '@/components/navigation.vue'
 
@@ -33,25 +33,39 @@ const buttonStyle = computed(() => ({
   backgroundColor: isRunning.value ? '#9a463d' : '#90AC8F', 
   color: isRunning.value ? '#F2EDDB' : 'black'
 }))
+
+// Reaktive Variable für den User-Namen
+const userName = ref('')
+
+// Beim Laden: Daten aus dem localStorage holen
+onMounted(() => {
+  const userData = localStorage.getItem('loggedInUser')
+  if (userData) {
+    const parsedUser = JSON.parse(userData)
+    userName.value = `${parsedUser.vorname} ${parsedUser.nachname}`
+  }
+})
 </script>
+
 <template>
-    <div class="wrapper">
-     <navigation></navigation>
+  <div class="wrapper">
+    <navigation></navigation>
   
-      <main class="content">
+    <main class="content">
+      <h2 class="title">Hallo {{ userName || 'Benutzer' }}</h2>
       <Uhrzeit></Uhrzeit>
-        <div class="timer-box">
-            <h1 class="title">Zeiterfassung</h1>
-            <h2 class="title">{{ formattedTime }}</h2>
-            <div class="info">
-                <p><strong>LAST:</strong> Start 8:02</p>
-                <p><strong>Status:</strong> -6:34</p>
-      </div>
-      <button @click="toggleTimer" :style="buttonStyle"> {{ isRunning ? 'Stop' : 'Start' }} </button>
+      <div class="timer-box">
+        <h1 class="title">Zeiterfassung</h1>
+        <h2 class="title">{{ formattedTime }}</h2>
+        <div class="info">
+          <p><strong>LAST:</strong> Start 8:02</p>
+          <p><strong>Status:</strong> -6:34</p>
         </div>
-      </main>
-    </div>
-  </template>
+        <button @click="toggleTimer" :style="buttonStyle"> {{ isRunning ? 'Stop' : 'Start' }} </button>
+      </div>
+    </main>
+  </div>
+</template>
   
   <style scoped>
   * {
@@ -148,5 +162,9 @@ const buttonStyle = computed(() => ({
   align-items: center;
   gap: 5px;
   width: 450px;
+}
+.timer-box h2:first-of-type {
+  font-size: 28px;
+  margin-bottom: 10px;
 }
   </style>

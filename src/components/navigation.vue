@@ -1,11 +1,23 @@
 <script setup>
+import { ref, onMounted } from 'vue'
+
+const showDashboard = ref(false)
+
+onMounted(() => {
+  const userData = localStorage.getItem('loggedInUser')
+  if (userData) {
+    const user = JSON.parse(userData)
+    showDashboard.value = user.isHR === true
+  }
+})
+
 </script>
 <template>
 <header class="header">
         <nav class="nav-bar">
           <a href="Tagesanzeige">Tagesanzeige</a>
           <a href="#">Übersicht</a>
-          <a href="Dashboard">Dashboard</a>
+          <a v-if="showDashboard" href="Dashboard">Dashboard</a>
         </nav>
       </header>
 </template>

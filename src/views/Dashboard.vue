@@ -138,11 +138,10 @@
   }
   
   header h1 {
-    font-size: 2rem;
-    border: 2px solid #9878ff;
-    padding: 0.2rem 1rem;
-    display: inline-block;
-  }
+  font-size: 2rem;
+  padding: 0.2rem 1rem;
+  display: inline-block;
+}
   
   .logo {
     font-family: monospace;

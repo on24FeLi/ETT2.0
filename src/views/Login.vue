@@ -1,13 +1,33 @@
 <script setup>
-import { ref } from 'vue'
 import uhrzeit from '@/components/Uhrzeit.vue'
 import navigation from '@/components/navigation.vue'
+import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+import { users } from '@/utils/storageTest'
+
+const router = useRouter()
+
 const userName = ref('')
 const passWord = ref('')
+const loginError = ref('')
+
+onMounted(() => {
+  const savedUsers = localStorage.getItem('users')
+  if (savedUsers) {
+    users.length = 0
+    users.push(...JSON.parse(savedUsers))
+  }
+})
 function userLogin() {
-  console.log('Login')
-  if (userName.value === 'admin' && passWord.value === 'admin') {
-    console.log('admin')
+  const user = users.find(
+    u => u.email === userName.value && u.passwort === passWord.value)
+
+  if (user) {
+    localStorage.setItem('loggedInUser', JSON.stringify(user))
+    loginError.value = ''
+    router.push('/tagesanzeige') // ← Routenpfad aus dem Router
+  } else {
+    loginError.value = 'Falsche E-Mail oder Passwort'
   }
 }
 </script>

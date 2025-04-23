@@ -1,0 +1,36 @@
+{
+  "name": "ett2.0",
+  "version": "1.0.0",
+  "main": "electron/main.js",
+  "scripts": {
+    "dev": "vite",
+    "electron": "electron electron/main.js",
+    "dev:all": "concurrently \"npm run dev\" \"npm run electron\"",
+    "build": "vite build && electron-builder",
+    "postinstall": "electron-builder install-app-deps"
+  },
+  "dependencies": {
+    "electron": "^28.1.0",
+    "pinia": "^2.1.7",
+    "vue": "^3.4.15",
+    "vue-router": "^4.5.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^5.2.3",
+    "concurrently": "^8.2.2",
+    "electron-builder": "^24.7.0",
+    "vite": "^5.2.0",
+    "wait-on": "^7.0.1"
+  },
+  "build": {
+    "appId": "com.example.vue-electron-app",
+    "productName": "VueElectronApp",
+    "files": [
+      "dist/",
+      "electron/"
+    ],
+    "directories": {
+      "buildResources": "assets"
+    }
+  }
+}

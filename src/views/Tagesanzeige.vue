@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted, onUnmounted, computed } from 'vue'
-import Uhrzeit from '../components/Uhrzeit.vue'
-import navigation from '../components/navigation.vue'
+import Uhrzeit from '@/components/Uhrzeit.vue'
+import navigation from '@/components/navigation.vue'
 
 //--> Buttons <--
 const isRunning = ref(false)

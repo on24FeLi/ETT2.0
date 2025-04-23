@@ -1,7 +1,7 @@
 <script setup>
 import { ref } from 'vue'
-import Uhrzeit from '../components/Uhrzeit.vue'
-import navigation from '../components/navigation.vue'
+import uhrzeit from '@/components/Uhrzeit.vue'
+import navigation from '@/components/navigation.vue'
 const userName = ref('')
 const passWord = ref('')
 function userLogin() {
@@ -15,7 +15,7 @@ function userLogin() {
   <div class="wrapper">
     <navigation></navigation>
     <main class="content">
-      <Uhrzeit />
+      <uhrzeit />
       <div class="timer-box">
         <h1 class="title">Login</h1>
         <div class="info">

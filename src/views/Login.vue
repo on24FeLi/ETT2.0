@@ -39,7 +39,6 @@ function userLogin() {
 </script>
 <template>
   <div class="wrapper">
-    <navigation></navigation>
     <main class="content">
       <uhrzeit />
       <div class="timer-box">

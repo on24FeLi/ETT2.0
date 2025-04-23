@@ -3,9 +3,9 @@
 <template>
 <header class="header">
         <nav class="nav-bar">
-          <a href="#">Tagesanzeige</a>
+          <a href="Tagesanzeige">Tagesanzeige</a>
           <a href="#">Übersicht</a>
-          <a href="../views/Dashboard.vue">Dashboard</a>
+          <a href="Dashboard">Dashboard</a>
         </nav>
       </header>
 </template>

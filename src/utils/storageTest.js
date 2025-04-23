@@ -4,14 +4,16 @@ const users = [
     nachname: 'Müller',
     vorname: 'Anna',
     email: 'anna.mueller@example.com',
-    passwort: 'Passwort123'
+    passwort: 'Passwort123',
+    isAdmin: false
   },
   {
     id: 2,
     nachname: 'Schmidt',
     vorname: 'Tom',
     email: 'tom.schmidt@example.com',
-    passwort: 'Geheim456'
+    passwort: 'Geheim456', 
+    isAdmin: true
   }
 ]
 
@@ -23,7 +25,8 @@ function addUser(nachname, vorname, email, passwort) {
     nachname,
     vorname,
     email,
-    passwort
+    passwort, 
+    isAdmin
   })
   localStorage.setItem('users', JSON.stringify(users))
 }

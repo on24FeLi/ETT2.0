@@ -3,9 +3,9 @@
 <template>
 <header class="header">
         <nav class="nav-bar">
-          <a href="#">Tagesanzeige</a>
+          <a href="Tagesanzeige">Tagesanzeige</a>
           <a href="#">Übersicht</a>
-          <a href="#">Einstellungen</a>
+          <a href="Dashboard">Dashboard</a>
         </nav>
       </header>
 </template>

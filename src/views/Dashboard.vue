@@ -1,11 +1,13 @@
 <script setup>
   import { ref } from 'vue';
   import navigation from '@/components/navigation.vue'
+  import { users, addUser } from '@/utils/storageTest'
+
   
   const showForm = ref(false);
   
   const form = ref({
-    name: '',
+    nachname: '',
     vorname: '',
     email: '',
     password: '',
@@ -15,9 +17,36 @@
   function toggleForm() {
     showForm.value = !showForm.value;
   }
-  
+  const userList = ref(users)
   function submitForm() {
-    console.log('Mitarbeiterdaten:', form.value);
+    function submitForm() {
+  // Validierung optional
+  if (!form.value.nachname || !form.value.vorname || !form.value.email || !form.value.password) {
+    alert('Bitte alle Felder ausfüllen!');
+    return;
+  }
+
+  addUser(
+    form.value.nachname,
+    form.value.vorname,
+    form.value.email,
+    form.value.password,
+    form.value.isHR
+  );
+
+  console.log('Mitarbeiter hinzugefügt:', form.value);
+
+  // Formular zurücksetzen
+  form.value = {
+    nachname: '',
+    vorname: '',
+    email: '',
+    password: '',
+    isHR: false
+  };
+
+  toggleForm(); // Formular schließen
+}
     toggleForm();
   }
   </script>
@@ -49,12 +78,12 @@
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td>Beispiel</td>
-                <td>Mitarbeiter</td>
-                <td>Nein</td>
-                <td class="actions">✏️ 🗑️</td>
-              </tr>
+             <tr v-for="user in userList" :key="user.id">
+             <td>{{ user.nachname }}</td>
+             <td>{{ user.vorname }}</td>
+             <td>{{ user.isHR ? 'Ja' : 'Nein' }}</td>
+             <td class="actions">✏️ 🗑️</td>
+             </tr>
             </tbody>
           </table>
         </div>
@@ -73,7 +102,7 @@
         <div class="form-popup">
           <button class="close-btn" @click="toggleForm">×</button>
           <h2>Neuen Mitarbeiter hinzufügen</h2>
-          <input type="text" v-model="form.name" placeholder="Name" required>
+          <input type="text" v-model="form.nachname" placeholder="Name" required>
           <input type="text" v-model="form.vorname" placeholder="Vorname" required>
           <input type="email" v-model="form.email" placeholder="E-Mail" required>
           <input type="password" v-model="form.password" placeholder="Passwort" required>

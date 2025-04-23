@@ -5,7 +5,7 @@ const users = [
     vorname: 'Anna',
     email: 'anna.mueller@example.com',
     passwort: 'Passwort123',
-    isAdmin: false
+    isHR: false
   },
   {
     id: 2,
@@ -13,20 +13,20 @@ const users = [
     vorname: 'Tom',
     email: 'tom.schmidt@example.com',
     passwort: 'Geheim456', 
-    isAdmin: true
+    isHR: true
   }
 ]
 
 let nextId = users.length + 1
 
-function addUser(nachname, vorname, email, passwort) {
+function addUser(nachname, vorname, email, passwort, isHR  = false) {
   users.push({
     id: nextId++,
     nachname,
     vorname,
     email,
     passwort, 
-    isAdmin
+    isHR
   })
   localStorage.setItem('users', JSON.stringify(users))
 }

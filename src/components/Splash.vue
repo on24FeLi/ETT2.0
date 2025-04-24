@@ -4,7 +4,7 @@ import { onMounted } from 'vue'
 onMounted(() => {
   setTimeout(() => {
     window.location.href = '/login' // oder: router.push('/login')
-  }, 3000)
+  }, 2500)
 })
 </script>
 

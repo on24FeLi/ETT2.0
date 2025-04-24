@@ -4,15 +4,16 @@ import Login from '../views/Login.vue';
 import Tagesanzeige from '../views/Tagesanzeige.vue';
 import Dashboard from '../views/Dashboard.vue'
 import Wochenansicht from '@/views/Wochenansicht.vue';
+import Splash from '@/components/Splash.vue';
 //import { hasRole } from '../utils/auth';
 
 const routes = [
-    { path: '/', component: Login },
     { path: '/login', component: Login },
     { path: '/homepage', component: Homepage },
     { path: '/tagesanzeige', component: Tagesanzeige },
     { path: '/dashboard', component: Dashboard },
-    { path: '/Wochenansicht', component: Wochenansicht }
+    { path: '/Wochenansicht', component: Wochenansicht },
+    { path: '/', component: Splash }
 ];
 
 const router = createRouter({

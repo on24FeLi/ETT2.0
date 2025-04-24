@@ -1,8 +1,9 @@
 <script setup>
 import { ref } from "vue";
 import navigation from "@/components/navigation.vue";
-import { users, addUser, deleteUser } from "@/utils/storageTest";
-
+import { users, addUser, deleteUser, updateUser } from "@/utils/storageTest";
+import {deleteWorkTimesByUser} from "@/utils/Arbeitszeiten"
+const editingUser = ref(null);
 const showForm = ref(false);
 
 const form = ref({
@@ -15,6 +16,12 @@ const form = ref({
 
 function toggleForm() {
   showForm.value = !showForm.value;
+
+  if (showForm.value) {
+    // Wenn das Formular geöffnet wird, zurücksetzen
+    resetForm();
+  }
+
 }
 const userList = ref(users);
 function submitForm() {
@@ -23,8 +30,12 @@ function submitForm() {
     alert("Bitte alle Felder ausfüllen!");
     return;
   }
-
-  addUser(
+  if (editingUser.value) {
+    // Bearbeiten
+    updateUser(editingUser.value.id, { ...form.value });
+    console.log("Mitarbeiter bearbeitet:", form.value);
+  } 
+ else {addUser(
     form.value.nachname,
     form.value.vorname,
     form.value.email,
@@ -43,14 +54,40 @@ function submitForm() {
     password: "",
     isHR: false,
   };
+} 
+userList.value = [...users];
 
+// Reset
+resetForm();
   toggleForm(); // Formular schließen
 }
 function deleteUserFromStorage(user){
   if (confirm(`Möchtest du ${user.vorname} ${user.nachname} wirklich löschen?`)) {
     deleteUser(user.id);
+    deleteWorkTimesByUser(user.id);
     userList.value = [...users];
   }
+}
+function editUserFromStorage(user) {
+  form.value = {
+    nachname: user.nachname,
+    vorname: user.vorname,
+    email: user.email,
+    password: user.passwort, // du kannst hier auch "" setzen, wenn das Passwort nicht angezeigt werden soll
+    isHR: user.isHR
+  };
+  editingUser.value = user;
+  showForm.value = true;
+}
+function resetForm() {
+  form.value = {
+    nachname: "",
+    vorname: "",
+    email: "",
+    password: "",
+    isHR: false,
+  };
+  editingUser.value = null;
 }
 </script>
 
@@ -84,7 +121,7 @@ function deleteUserFromStorage(user){
               <td>{{ user.vorname }}</td>
               <td>{{ user.isHR ? "Ja" : "Nein" }}</td>
               <td id="icons">
-    <button @click="editUser(user)">
+    <button @click="editUserFromStorage(user)">
       <img src="/public/edit.png" alt="Edit" />
     </button>
     <button @click="deleteUserFromStorage(user)">
@@ -109,7 +146,7 @@ function deleteUserFromStorage(user){
     <div class="overlay" v-if="showForm">
       <div class="form-popup">
         <button class="close-btn" @click="toggleForm">×</button>
-        <h2>Neuen Mitarbeiter hinzufügen</h2>
+        <h2>{{ editingUser ? 'Mitarbeiter bearbeiten' : 'Neuen Mitarbeiter hinzufügen' }}</h2>
         <input type="text" v-model="form.nachname" placeholder="Name" required />
         <input type="text" v-model="form.vorname" placeholder="Vorname" required />
         <input type="email" v-model="form.email" placeholder="E-Mail" required />
@@ -121,7 +158,7 @@ function deleteUserFromStorage(user){
         </label>
 
         <div class="form-buttons right">
-          <button @click="submitForm">Hinzufügen</button>
+          <button @click="submitForm">{{ editingUser ? 'Speichern' : 'Hinzufügen' }}</button>
         </div>
       </div>
     </div>

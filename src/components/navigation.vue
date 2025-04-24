@@ -16,7 +16,7 @@ onMounted(() => {
 <header class="header">
         <nav class="nav-bar">
           <a href="Tagesanzeige">Tagesanzeige</a>
-          <a href="#">Übersicht</a>
+          <a href="Wochenansicht">Wochenansicht</a>
           <a v-if="showDashboard" href="Dashboard">Dashboard</a>
           <button @click="userLogout" id="logout">Logout</button>
           

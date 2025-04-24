@@ -52,7 +52,7 @@ onMounted(() => {
     <navigation></navigation>
   
     <main class="content">
-      <h2 class="title">Hallo, {{ userName || 'Benutzer' }}!</h2>
+      <h2 class="title">Hallo {{ userName || 'Benutzer' }}</h2>
       <Uhrzeit></Uhrzeit>
       <div class="timer-box">
         <h1 class="title">Zeiterfassung</h1>

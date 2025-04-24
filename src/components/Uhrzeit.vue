@@ -3,7 +3,10 @@ import { ref, onMounted } from 'vue'
 
 //--> Uhrzeit <--
 let intervalId = null
-const time = ref(new Date().toLocaleTimeString())
+const time = ref(new Date().toLocaleTimeString('de-DE', {
+  hour: '2-digit',
+  minute: '2-digit'
+}))
 onMounted(() => {
 intervalId = setInterval(() => {
 time.value = new Date().toLocaleTimeString('de-DE', {

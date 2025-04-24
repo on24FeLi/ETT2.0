@@ -108,6 +108,7 @@ button {
 button:hover {
     transform: scale(1.05);
   }
+  
   .timer-box {
   background-color: #F2EDDB;
   padding: 30px;

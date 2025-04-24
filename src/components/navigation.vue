@@ -18,6 +18,8 @@ onMounted(() => {
           <a href="Tagesanzeige">Tagesanzeige</a>
           <a href="#">Übersicht</a>
           <a v-if="showDashboard" href="Dashboard">Dashboard</a>
+          <button @click="userLogout" id="logout">Logout</button>
+          
         </nav>
       </header>
 </template>
@@ -56,4 +58,6 @@ onMounted(() => {
   .nav-bar a:hover {
     background-color: #ddd;
   }
+
+
 </style>

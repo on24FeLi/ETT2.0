@@ -42,4 +42,13 @@ function deleteUser(id) {
     localStorage.setItem('users', JSON.stringify(users));
   }
 }
-export { users, addUser, deleteUser }
+
+function updateUser(id, updatedData) {
+  const index = users.findIndex(user => user.id === id);
+  if (index !== -1) {
+    users[index] = { ...users[index], ...updatedData };
+    localStorage.setItem('users', JSON.stringify(users));
+  }
+}
+
+export { users, addUser, deleteUser,  updateUser }

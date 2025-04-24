@@ -1,7 +1,7 @@
 <script setup>
 import { ref } from "vue";
 import navigation from "@/components/navigation.vue";
-import { users, addUser } from "@/utils/storageTest";
+import { users, addUser, deleteUser } from "@/utils/storageTest";
 
 const showForm = ref(false);
 
@@ -46,6 +46,12 @@ function submitForm() {
 
   toggleForm(); // Formular schließen
 }
+function deleteUserFromStorage(user){
+  if (confirm(`Möchtest du ${user.vorname} ${user.nachname} wirklich löschen?`)) {
+    deleteUser(user.id);
+    userList.value = [...users];
+  }
+}
 </script>
 
 <template>
@@ -81,7 +87,7 @@ function submitForm() {
     <button @click="editUser(user)">
       <img src="/public/edit.png" alt="Edit" />
     </button>
-    <button @click="deleteUser(user)">
+    <button @click="deleteUserFromStorage(user)">
       <img src="/public/delete.png" alt="Delete" />
     </button>
   </td>

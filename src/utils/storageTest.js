@@ -35,4 +35,11 @@ function addUser(nachname, vorname, email, passwort, isHR  = false) {
   localStorage.setItem('users', JSON.stringify(users))
 }
 
-export { users, addUser }
+function deleteUser(id) {
+  const index = users.findIndex(user => user.id === id);
+  if (index !== -1) {
+    users.splice(index, 1);
+    localStorage.setItem('users', JSON.stringify(users));
+  }
+}
+export { users, addUser, deleteUser }

@@ -10,7 +10,10 @@ onMounted(() => {
     showDashboard.value = user.isHR === true
   }
 })
-
+function logout() {
+  localStorage.removeItem("loggedInUser");
+  window.location.href = "/Login"; 
+}
 </script>
 <template>
 <header class="header">
@@ -18,7 +21,9 @@ onMounted(() => {
           <a href="Tagesanzeige">Tagesanzeige</a>
           <a href="Wochenansicht">Wochenansicht</a>
           <a v-if="showDashboard" href="Dashboard">Dashboard</a>
-          <button @click="userLogout" id="logout">Logout</button>
+          <button @click="logout" id="logout">Logout 
+            <img src="/public/rechter-pfeil.png" alt="Logout" />
+          </button>
           
         </nav>
       </header>
@@ -38,6 +43,23 @@ onMounted(() => {
     display: flex;
     align-items: center;
     justify-content: center;
+  }
+
+  .nav-bar #logout{
+    text-decoration: none;
+    font-weight: bold;
+    color: black;
+    font-family: Georgia, serif;
+    font-size: 16px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    transition: background-color 0.3s ease;
+    border: 0;
+    background-color: #F2EDDB;
+  }
+
+  .nav-bar #logout:hover{
+    background-color: #ddd;
   }
   
   .nav-bar {
@@ -59,5 +81,8 @@ onMounted(() => {
     background-color: #ddd;
   }
 
-
+img{
+  height: 10px;
+  width: 10px;
+}
 </style>

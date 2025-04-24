@@ -2,6 +2,7 @@
 import { ref } from "vue";
 import navigation from "@/components/navigation.vue";
 import { users, addUser, deleteUser, updateUser } from "@/utils/storageTest";
+import {deleteWorkTimesByUser} from "@/utils/Arbeitszeiten"
 const editingUser = ref(null);
 const showForm = ref(false);
 
@@ -63,6 +64,7 @@ resetForm();
 function deleteUserFromStorage(user){
   if (confirm(`Möchtest du ${user.vorname} ${user.nachname} wirklich löschen?`)) {
     deleteUser(user.id);
+    deleteWorkTimesByUser(user.id);
     userList.value = [...users];
   }
 }

@@ -52,7 +52,11 @@ const workTimes = computed(() => {
 
 <template>
     <div>
-      <navigation />
+      <header>
+      <h1>Wochenansicht</h1>
+      <navigation></navigation>
+      <div class="logo">🕒 <span>ETT</span></div>
+    </header>
   
       <div class="wochenansicht-container">
         <h2>Arbeitszeiten – Wochenübersicht</h2>
@@ -92,8 +96,75 @@ const workTimes = computed(() => {
   </template>
 
 <style scoped>
+header {
+  background-color: #f1ecdb;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  border-bottom: 1px solid #ccc;
+}
+
+header h1 {
+  font-size: 2rem;
+  padding: 0.2rem 1rem;
+  display: inline-block;
+}
+
+.logo {
+  font-family: monospace;
+  font-size: 2rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
 .wochenansicht-container {
   padding: 2rem;
+  max-width: 1100px;
+  margin: 0 auto;
+  background-color: #ffffff;
+  border: 1px solid #ccc;
+  border-radius: 0.5rem;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.05);
+  padding: 20px;
+}
+
+h2 {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: #222;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.wochen-navigation {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  gap: 1rem;
+}
+
+.wochen-navigation button {
+  background-color: #e5e5e5;
+  color: #222;
+  border: 1px solid #aaa;
+  padding: 0.5rem 1rem;
+  border-radius: 0.4rem;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.wochen-navigation button:hover {
+  background-color: #d4d4d4;
+}
+
+.wochen-navigation span {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: #333;
 }
 
 table {
@@ -102,10 +173,35 @@ table {
   margin-top: 1rem;
 }
 
-th,
-td {
-  padding: 0.5rem;
+th, td {
   border: 1px solid #ccc;
+  padding: 0.75rem;
   text-align: left;
+}
+
+th {
+  background-color: #f0f0f0;
+  font-weight: bold;
+  color: #222;
+}
+
+td {
+  background-color: #fff;
+  color: #333;
+}
+
+tbody tr:nth-child(even) td {
+  background-color: #f9f9f9;
+}
+
+tbody tr:hover td {
+  background-color: #f0f0f0;
+}
+
+p {
+  text-align: center;
+  margin-top: 2rem;
+  font-size: 1.1rem;
+  color: #666;
 }
 </style>

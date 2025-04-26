@@ -49,7 +49,11 @@ onMounted(() => {
 
 <template>
   <div class="wrapper">
-    <navigation></navigation>
+    <header>
+      <h1>Tagesansicht</h1>
+      <navigation></navigation>
+      <div class="logo">🕒 <span>ETT</span></div>
+    </header>
   
     <main class="content">
       <h2 class="title">Hallo, {{ userName || 'Benutzer' }}!</h2>
@@ -82,33 +86,28 @@ onMounted(() => {
     background-color: #F2EDDB;
   }
   
-  .header {
-    background-color: #F2EDDB;
-    padding: 20px;
-    border-bottom: 1px solid black;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  
-  .nav-bar {
-    display: flex;
-    gap: 30px;
-  }
-  
-  .nav-bar a {
-    text-decoration: none;
-    font-weight: bold;
-    color: black;
-    font-family: Georgia, serif;
-    padding: 8px 12px;
-    border-radius: 8px;
-    transition: background-color 0.3s ease;
-  }
-  
-  .nav-bar a:hover {
-    background-color: #ddd;
-  }
+  header {
+  background-color: #f1ecdb;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  border-bottom: 1px solid #ccc;
+}
+
+header h1 {
+  font-size: 2rem;
+  padding: 0.2rem 1rem;
+  display: inline-block;
+}
+
+.logo {
+  font-family: monospace;
+  font-size: 2rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
   
   .content {
     flex: 1;

@@ -30,6 +30,14 @@ function submitForm() {
     alert("Bitte alle Felder ausfüllen!");
     return;
   }
+  const emailExists = users.some(user => 
+    user.email.toLowerCase() === form.value.email.toLowerCase() &&
+    (!editingUser.value || user.id !== editingUser.value.id)
+  );
+  if (emailExists) {
+    alert("Diese E-Mail-Adresse ist bereits vergeben. Bitte eine andere verwenden.");
+    return;
+  }
   if (editingUser.value) {
     // Bearbeiten
     updateUser(editingUser.value.id, { ...form.value });

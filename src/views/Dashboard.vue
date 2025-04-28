@@ -2,7 +2,7 @@
 import { ref } from "vue";
 import navigation from "@/components/navigation.vue";
 import { users, addUser, deleteUser, updateUser } from "@/utils/storageTest";
-import {deleteWorkTimesByUser} from "@/utils/Arbeitszeiten"
+import { deleteWorkTimesByUser } from "@/utils/Arbeitszeiten";
 const editingUser = ref(null);
 const showForm = ref(false);
 
@@ -12,6 +12,7 @@ const form = ref({
   email: "",
   password: "",
   isHR: false,
+  arbeitszeitTyp: "Vollzeit",
 });
 
 function toggleForm() {
@@ -21,7 +22,6 @@ function toggleForm() {
     // Wenn das Formular geöffnet wird, zurücksetzen
     resetForm();
   }
-
 }
 const userList = ref(users);
 function submitForm() {
@@ -30,38 +30,48 @@ function submitForm() {
     alert("Bitte alle Felder ausfüllen!");
     return;
   }
+  const emailExists = users.some(user => 
+    user.email.toLowerCase() === form.value.email.toLowerCase() &&
+    (!editingUser.value || user.id !== editingUser.value.id)
+  );
+  if (emailExists) {
+    alert("Diese E-Mail-Adresse ist bereits vergeben. Bitte eine andere verwenden.");
+    return;
+  }
   if (editingUser.value) {
     // Bearbeiten
     updateUser(editingUser.value.id, { ...form.value });
     console.log("Mitarbeiter bearbeitet:", form.value);
-  } 
- else {addUser(
-    form.value.nachname,
-    form.value.vorname,
-    form.value.email,
-    form.value.password,
-    form.value.isHR
-  );
+  } else {
+    addUser(
+      form.value.nachname,
+      form.value.vorname,
+      form.value.email,
+      form.value.password,
+      form.value.isHR,
+      form.value.arbeitszeitTyp
+    );
 
-  console.log("Mitarbeiter hinzugefügt:", form.value);
+    console.log("Mitarbeiter hinzugefügt:", form.value);
 
-  console.log("addUser wurde ausgeführt");
-  // Formular zurücksetzen
-  form.value = {
-    nachname: "",
-    vorname: "",
-    email: "",
-    password: "",
-    isHR: false,
-  };
-} 
-userList.value = [...users];
+    console.log("addUser wurde ausgeführt");
+    // Formular zurücksetzen
+    form.value = {
+      nachname: "",
+      vorname: "",
+      email: "",
+      password: "",
+      isHR: false,
+      arbeitszeitTyp: "",
+    };
+  }
+  userList.value = [...users];
 
-// Reset
-resetForm();
+  // Reset
+  resetForm();
   toggleForm(); // Formular schließen
 }
-function deleteUserFromStorage(user){
+function deleteUserFromStorage(user) {
   if (confirm(`Möchtest du ${user.vorname} ${user.nachname} wirklich löschen?`)) {
     deleteUser(user.id);
     deleteWorkTimesByUser(user.id);
@@ -73,8 +83,9 @@ function editUserFromStorage(user) {
     nachname: user.nachname,
     vorname: user.vorname,
     email: user.email,
-    password: user.passwort, // du kannst hier auch "" setzen, wenn das Passwort nicht angezeigt werden soll
-    isHR: user.isHR
+    password: user.passwort,
+    isHR: user.isHR,
+    arbeitszeitTyp: user.arbeitszeitTyp || "Vollzeit",
   };
   editingUser.value = user;
   showForm.value = true;
@@ -86,6 +97,7 @@ function resetForm() {
     email: "",
     password: "",
     isHR: false,
+    arbeitszeitTyp: "Vollzeit",
   };
   editingUser.value = null;
 }
@@ -111,6 +123,8 @@ function resetForm() {
             <tr>
               <th>Name</th>
               <th>Vorname</th>
+              <th>E-mail</th>
+              <th>Arbeitszeit</th>
               <th>HR</th>
               <th></th>
             </tr>
@@ -119,15 +133,17 @@ function resetForm() {
             <tr v-for="user in userList" :key="user.id">
               <td>{{ user.nachname }}</td>
               <td>{{ user.vorname }}</td>
+              <td>{{ user.email }}</td>
+              <td>{{ user.arbeitszeitTyp }}</td>
               <td>{{ user.isHR ? "Ja" : "Nein" }}</td>
               <td id="icons">
-    <button @click="editUserFromStorage(user)">
-      <img src="/public/edit.png" alt="Edit" />
-    </button>
-    <button @click="deleteUserFromStorage(user)">
-      <img src="/public/delete.png" alt="Delete" />
-    </button>
-  </td>
+                <button @click="editUserFromStorage(user)">
+                  <img src="/public/edit.png" alt="Edit" />
+                </button>
+                <button @click="deleteUserFromStorage(user)">
+                  <img src="/public/delete.png" alt="Delete" />
+                </button>
+              </td>
             </tr>
           </tbody>
         </table>
@@ -140,13 +156,13 @@ function resetForm() {
       <div class="card" style="width: 100%">
         <div class="section-title">Auswertung</div>
       </div>
-    </div>
+    
 
     <!-- FORMULAR-OVERLAY -->
     <div class="overlay" v-if="showForm">
       <div class="form-popup">
         <button class="close-btn" @click="toggleForm">×</button>
-        <h2>{{ editingUser ? 'Mitarbeiter bearbeiten' : 'Neuen Mitarbeiter hinzufügen' }}</h2>
+        <h2>{{ editingUser ? "Mitarbeiter bearbeiten" : "Neuen Mitarbeiter hinzufügen" }}</h2>
         <input type="text" v-model="form.nachname" placeholder="Name" required />
         <input type="text" v-model="form.vorname" placeholder="Vorname" required />
         <input type="email" v-model="form.email" placeholder="E-Mail" required />
@@ -156,13 +172,20 @@ function resetForm() {
           <input type="checkbox" v-model="form.isHR" />
           Gehört zur HR-Abteilung
         </label>
-
+        <label class="checkbox">
+          Arbeitszeit:
+          <select v-model="form.arbeitszeitTyp">
+            <option value="Vollzeit">Vollzeit</option>
+            <option value="Teilzeit">Teilzeit</option>
+          </select>
+        </label>
         <div class="form-buttons right">
-          <button @click="submitForm">{{ editingUser ? 'Speichern' : 'Hinzufügen' }}</button>
+          <button @click="submitForm">{{ editingUser ? "Speichern" : "Hinzufügen" }}</button>
         </div>
       </div>
     </div>
   </div>
+</div>
 </template>
 
 <style scoped>
@@ -208,7 +231,7 @@ header h1 {
   border-radius: 1rem;
   padding: 1rem;
   flex: 1;
-  min-width: 300px;
+  
 }
 
 .employee-list {
@@ -328,7 +351,6 @@ td {
 }
 
 #icons button:not(:last-child) {
-  margin-right: 20px; 
+  margin-right: 20px;
 }
-
 </style>

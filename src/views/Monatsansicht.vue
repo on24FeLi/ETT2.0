@@ -17,6 +17,7 @@ function showMonatsListe() {
 
 <template>
     <navigation> </navigation>
+    <div class="border">
   <div class="switcher-container">
     <div class="button-group">
       <button @click="showKalender"><img src="/public/kalender.png" alt="Kalender" /></button>
@@ -27,13 +28,21 @@ function showMonatsListe() {
       <Kalenderansicht v-if="currentView === 'kalender'" />
       <Monatsansichtliste v-else />
     </div>
-  </div>
+  </div></div>
 </template>
 
 <style scoped>
+.border{
+  border: 2px solid #ccc;
+  border-radius: 10px;
+  padding: 20px;
+  background-color: #fafafa;
+
+}
 .switcher-container {
   padding: 2rem;
   text-align: center;
+ 
 }
 
 .button-group {

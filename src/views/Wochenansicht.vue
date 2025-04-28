@@ -6,6 +6,7 @@ import { getWorkTimesByUser } from '@/utils/Arbeitszeiten';
 // Eingeloggten Benutzer laden
 const user = JSON.parse(localStorage.getItem('loggedInUser'));
 const userId = user?.id ?? null;
+const arbeitszeitTyp = user?.arbeitszeitTyp ?? "Vollzeit";
 
 // Hilfsfunktion: Uhrzeit aus Datum entfernen (nur Datum vergleichen)
 function toDateOnly(date) {
@@ -48,6 +49,12 @@ const workTimes = computed(() => {
     return entryDate >= start && entryDate <= end;
   });
 });
+const sollStunden = computed(() => {
+  if (arbeitszeitTyp === 'Teilzeit') {
+    return 6; // Teilzeit: 6 Stunden
+  }
+  return 8; // Vollzeit: 8 Stunden
+});
 </script>
 
 <template>
@@ -85,7 +92,7 @@ const workTimes = computed(() => {
               <td>{{ entry.start }}</td>
               <td>{{ entry.end }}</td>
               <td>{{ entry.workinghours }}</td>
-              <td>{{ entry.workinghours-8 }}</td>
+              <td>{{ (entry.workinghours - sollStunden).toFixed(2) }}</td>
             </tr>
           </tbody>
         </table>

@@ -55,6 +55,11 @@ const sollStunden = computed(() => {
   }
   return 8; // Vollzeit: 8 Stunden
 });
+function getWeekdayAbbreviation(dateString) {
+  const days = ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'];
+  const date = new Date(dateString);
+  return days[date.getDay()];
+}
 </script>
 
 <template>
@@ -79,15 +84,18 @@ const sollStunden = computed(() => {
         <table v-if="workTimes.length">
           <thead>
             <tr>
+              <th>Tag</th>
               <th>Datum</th>
               <th>Beginn</th>
               <th>Ende</th>
-              <th>Stunden</th>
+              <th>Arbeitszeit
+              </th>
               <th>Überstunden / Minusstunden</th>
             </tr>
           </thead>
           <tbody>
             <tr v-for="(entry, index) in workTimes" :key="index">
+              <td>{{ getWeekdayAbbreviation(entry.date) }}</td>
               <td>{{ new Date(entry.date).toLocaleDateString('de-DE') }}</td>
               <td>{{ entry.start }}</td>
               <td>{{ entry.end }}</td>

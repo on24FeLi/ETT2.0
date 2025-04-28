@@ -2,10 +2,13 @@
 import { ref, onMounted, computed } from 'vue'
 import Uhrzeit from '@/components/Uhrzeit.vue'
 import navigation from '@/components/navigation.vue'
-
+let startTimestamp = null;
+let stopTimestamp = null;
 //--> Buttons <--
 const isRunning = ref(false)
 const totalSeconds = ref(0)
+const storedStartTime = ref('-');
+const storedEndTime = ref('-');
 let intervalId = null // <-- Wichtig!
 
 //--> Zeit als HH:MM:SS anzeigen
@@ -20,12 +23,19 @@ function toggleTimer() {
   isRunning.value = !isRunning.value
 
   if (isRunning.value) {
+    // Timer starten
+    startTimestamp = new Date(); // Startzeit merken
     intervalId = setInterval(() => {
       totalSeconds.value++
     }, 1000)
   } else {
+    // Timer stoppen
     clearInterval(intervalId)
     intervalId = null
+    stopTimestamp = new Date(); // Stoppzeit merken
+
+    // --> Daten speichern
+    saveWorkTime();
   }
 }
 
@@ -38,13 +48,107 @@ const buttonStyle = computed(() => ({
 const userName = ref('')
 
 // Beim Laden: Daten aus dem localStorage holen
-onMounted(() => {
-  const userData = localStorage.getItem('loggedInUser')
-  if (userData) {
-    const parsedUser = JSON.parse(userData)
-    userName.value = `${parsedUser.vorname} ${parsedUser.nachname}`
+
+function saveWorkTime() {
+  const userData = localStorage.getItem('loggedInUser');
+  if (!userData) {
+    alert('Kein Benutzer eingeloggt.');
+    return;
   }
-})
+
+  const user = JSON.parse(userData);
+  const todayDate = new Date().toISOString().split('T')[0];
+
+  const existingEntries = JSON.parse(localStorage.getItem('workTimes')) || [];
+
+  const existingEntryIndex = existingEntries.findIndex(
+    entry => entry.userId === user.id && entry.date === todayDate
+  );
+
+  if (existingEntryIndex !== -1) {
+    // Heute existiert bereits -> Endzeit aktualisieren und Stunden addieren
+    const existingEntry = existingEntries[existingEntryIndex];
+
+    existingEntry.end = stopTimestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    existingEntry.workinghours = parseFloat(existingEntry.workinghours) + totalSeconds.value / 3600;
+  } else {
+    // Heute existiert noch nicht -> neuen Eintrag erstellen
+    const newEntry = {
+      userId: user.id,
+      date: todayDate,
+      start: startTimestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      end: stopTimestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      workinghours: totalSeconds.value / 3600
+    };
+    existingEntries.push(newEntry);
+  }
+
+  // Speichern
+  localStorage.setItem('workTimes', JSON.stringify(existingEntries));
+
+  // Nach dem Speichern: Start- und Endzeit neu laden
+  loadTodayTimes();
+
+  // Timer zurücksetzen
+  totalSeconds.value = 0;
+  startTimestamp = null;
+  stopTimestamp = null;
+
+  console.log('Arbeitszeit erfolgreich gespeichert!',newEntry);
+}
+onMounted(() => {
+  const userData = localStorage.getItem('loggedInUser');
+  if (userData) {
+    const parsedUser = JSON.parse(userData);
+    userName.value = `${parsedUser.vorname} ${parsedUser.nachname}`;
+  }
+  loadTodayTimes();
+});
+function loadTodayTimes() {
+  const userData = localStorage.getItem('loggedInUser');
+  if (!userData) return;
+
+  const user = JSON.parse(userData);
+  const todayDate = new Date().toISOString().split('T')[0];
+
+  const existingEntries = JSON.parse(localStorage.getItem('workTimes')) || [];
+  const todayEntry = existingEntries.find(entry => entry.userId === user.id && entry.date === todayDate);
+
+  if (todayEntry) {
+    storedStartTime.value = todayEntry.start;
+    storedEndTime.value = todayEntry.end;
+  } else {
+    storedStartTime.value = '-';
+    storedEndTime.value = '-';
+  }
+}
+
+// Diese Computed Properties ergänzen:
+const startTimeDisplay = computed(() => {
+  return storedStartTime.value || '-';
+});
+
+const endTimeDisplay = computed(() => {
+  return storedEndTime.value || '-';
+});
+
+
+const todaysStoredHours = computed(() => {
+  const userData = localStorage.getItem('loggedInUser');
+  if (!userData) return "-";
+
+  const user = JSON.parse(userData);
+  const todayDate = new Date().toISOString().split('T')[0];
+  const existingEntries = JSON.parse(localStorage.getItem('workTimes')) || [];
+  const todayEntry = existingEntries.find(entry => entry.userId === user.id && entry.date === todayDate);
+
+  if (!todayEntry) return "0h 0min";
+
+  const totalHours = Math.floor(todayEntry.workinghours);
+  const totalMinutes = Math.round((todayEntry.workinghours % 1) * 60);
+
+  return `${totalHours}h ${totalMinutes}min`;
+});
 </script>
 
 <template>
@@ -62,9 +166,10 @@ onMounted(() => {
         <h1 class="title">Zeiterfassung</h1>
         <h2 class="title">{{ formattedTime }}</h2>
         <div class="info">
-          <p><strong>LAST:</strong> Start 8:02</p>
-          <p><strong>Status:</strong> -6:34</p>
-        </div>
+          <p><strong>Start:</strong> {{ startTimeDisplay }}</p>
+  <p><strong>Ende:</strong> {{ endTimeDisplay }}</p>
+  
+  <p><strong>Gesamt heute:</strong> {{ todaysStoredHours }}</p></div>
         <button @click="toggleTimer" :style="buttonStyle"> {{ isRunning ? 'Stop' : 'Start' }} </button>
       </div>
     </main>

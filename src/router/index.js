@@ -5,6 +5,7 @@ import Tagesanzeige from '../views/Tagesanzeige.vue';
 import Dashboard from '../views/Dashboard.vue'
 import Wochenansicht from '@/views/Wochenansicht.vue';
 import Splash from '@/components/Splash.vue';
+import Monatsansicht from '../views/Monatsansicht.vue';
 //import { hasRole } from '../utils/auth';
 
 const routes = [
@@ -13,7 +14,8 @@ const routes = [
     { path: '/tagesanzeige', component: Tagesanzeige },
     { path: '/dashboard', component: Dashboard },
     { path: '/Wochenansicht', component: Wochenansicht },
-    { path: '/', component: Splash }
+    { path: '/', component: Splash },
+    { path: '/Monatsansicht', component: Monatsansicht}
 ];
 
 const router = createRouter({

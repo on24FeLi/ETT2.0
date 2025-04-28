@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue'
 import Uhrzeit from '@/components/Uhrzeit.vue'
-import navigation from '@/components/navigation.vue'
+
 
 // Aktuelles Datum
 const date = ref(new Date());
@@ -58,12 +58,7 @@ const selectedDate = ref(null);
 </script>
 
 <template>
-  <div class="wrapper">
-    <header>
-      <h1>Monatsansicht</h1>
-      <navigation />
-      <div class="logo">🕒 <span>ETT</span></div>
-    </header>
+  
 
     <div class="calendar">
       <div class="calendar-header">
@@ -96,7 +91,7 @@ const selectedDate = ref(null);
       </div>
     </div>
     <p v-else-if="selectedDate">Keine Zeiteinträge für diesen Tag.</p>
-  </div>
+  
 </template>
 
 <style scoped>

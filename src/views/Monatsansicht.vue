@@ -2,7 +2,7 @@
 import { ref } from 'vue'
 import Kalenderansicht from '@/components/kalenderansicht.vue'
 import Monatsansichtliste from '@/components/monatsansichtliste.vue'
-
+import navigation from '@/components/navigation.vue';
 // Steuerung, welche Ansicht aktiv ist
 const currentView = ref('kalender') // 'wochen' oder 'monat'
 
@@ -16,6 +16,7 @@ function showMonatsListe() {
 </script>
 
 <template>
+    <navigation> </navigation>
   <div class="switcher-container">
     <div class="button-group">
       <button @click="showKalender">kalenderBild</button>

@@ -1,6 +1,6 @@
 <script setup>
 import { ref, computed } from 'vue';
-import navigation from '@/components/navigation.vue';
+
 import { getWorkTimesByUser } from '@/utils/Arbeitszeiten';
 
 // Eingeloggten Benutzer laden

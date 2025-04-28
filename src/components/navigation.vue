@@ -83,7 +83,7 @@ function logout() {
   }
 
 img{
-  height: 10px;
-  width: 10px;
+  height: 150px;
+  width: 150px;
 }
 </style>

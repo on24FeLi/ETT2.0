@@ -1,13 +1,15 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue'
-import Uhrzeit from '@/components/Uhrzeit.vue'
+import { getWorkTimesByUser } from '@/utils/Arbeitszeiten';
 
-
+const user = JSON.parse(localStorage.getItem('loggedInUser'));
+const userId = user?.id ?? null;
+const arbeitszeitTyp = user?.arbeitszeitTyp ?? "Vollzeit";
 // Aktuelles Datum
 const date = ref(new Date());
-
-// Arrays für Tage im Kalender
 const days = ref([]);
+const selectedDate = ref(null);
+const filteredEntries = ref([]);
 
 // Monat + Jahr als Computed Property
 const monthYear = computed(() => {
@@ -47,14 +49,56 @@ function nextMonth() {
   renderCalendar();
 }
 
+function selectDate(day) {
+  if (!day || !userId) return;
+
+  const year = date.value.getFullYear();
+  const month = String(date.value.getMonth() + 1).padStart(2, '0');
+  const dayString = String(day).padStart(2, '0');
+  const fullDate = `${year}-${month}-${dayString}`;
+
+  selectedDate.value = fullDate;
+
+  const allUserEntries = getWorkTimesByUser(userId);
+  filteredEntries.value = allUserEntries.filter(entry => entry.date === fullDate);
+}
 
 onMounted(() => {
   renderCalendar();
-})
+});
 
-// Dummy für Zeiteinträge
-const filteredEntries = ref([]);
-const selectedDate = ref(null);
+// Hilfsfunktion: Datum hübsch formatieren
+
+// Hilfsfunktion: Überstunden / Minusstunden berechnen
+
+function getDayClass(day) {
+  if (!day) return 'empty';
+
+  const year = date.value.getFullYear();
+  const month = String(date.value.getMonth() + 1).padStart(2, '0');
+  const dayString = String(day).padStart(2, '0');
+  const fullDate = `${year}-${month}-${dayString}`;
+
+  const allUserEntries = getWorkTimesByUser(userId);
+  const entry = allUserEntries.find(entry => entry.date === fullDate);
+
+  if (entry) {
+    // Dynamische Sollstunden je nach Arbeitszeittyp
+    const sollStunden = arbeitszeitTyp === 'Teilzeit' ? 6 : 8;
+    const gearbeitet = parseFloat(entry.workinghours);
+    if (gearbeitet >= sollStunden) {
+      return 'enough-worked';
+    } else {
+      return 'not-enough-worked';
+    }
+  } else {
+    return ''; // normaler Tag ohne extra Farbe
+  }
+}
+function calculateDifference(workinghours) {
+  const sollStunden = arbeitszeitTyp === 'Teilzeit' ? 6 : 8;
+  return (parseFloat(workinghours) - sollStunden).toFixed(2);
+}
 </script>
 
 <template>
@@ -78,23 +122,88 @@ const selectedDate = ref(null);
       </div>
 
       <div class="calendar-dates">
-        <div v-for="(day, index) in days" :key="index">
+        <div  v-for="(day, index) in days" 
+    :key="index"
+    :class="getDayClass(day)"
+    @click="selectDate(day)">
           {{ day }}
         </div>
       </div>
-    </div>
+    
+    <div v-if="selectedDate" class="entries-section">
+      <h4>Zeiteinträge für den {{ new Date(selectedDate).toLocaleDateString('de-DE') }}</h4>
 
     <div v-if="filteredEntries.length">
-      <div v-for="entry in filteredEntries" :key="entry.start + entry.project" class="entry">
-        <p><strong>Projekt:</strong> {{ entry.project }}</p>
-        <p><strong>Start:</strong> {{ entry.start }} - <strong>Ende:</strong> {{ entry.end }}</p>
-      </div>
+      <table class="arbeitszeiten-tabelle">
+    <thead>
+      <tr>
+        <th>Beginn</th>
+        <th>Ende</th>
+        <th>Arbeitszeit (h)</th>
+        <th>Überstunden</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr v-for="(entry, index) in filteredEntries" :key="index">
+        <td>{{ entry.start }}</td>
+        <td>{{ entry.end }}</td>
+        <td>{{ entry.workinghours }}</td>
+        <td>{{ calculateDifference(entry.workinghours) }}</td>
+      </tr>
+    </tbody>
+  </table>
     </div>
-    <p v-else-if="selectedDate">Keine Zeiteinträge für diesen Tag.</p>
-  
+ 
+
+    <p v-else>Keine Zeiteinträge für diesen Tag.</p>
+   </div>
+  </div>
 </template>
 
 <style scoped>
+.arbeitszeiten-tabelle {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+ 
+}
+
+.enough-worked {
+  background-color: #d4edda; /* sanftes grün */
+  border: 2px solid #28a745; /* kräftiger grün Rand */
+  color: #155724;
+  font-weight: bold;
+}
+
+.not-enough-worked {
+  background-color: #f8d7da; /* sanftes rot */
+  border: 2px solid #dc3545; /* kräftiger rot Rand */
+  color: #721c24;
+  font-weight: bold;
+}
+.arbeitszeiten-tabelle th,
+.arbeitszeiten-tabelle td {
+  border: 1px solid #ccc;
+  padding: 0.75rem;
+  text-align: center; /* Inhalte mittig */
+  vertical-align: middle;
+}
+
+.arbeitszeiten-tabelle th {
+  background-color: #f0f0f0;
+  font-weight: bold;
+ 
+}
+
+.arbeitszeiten-tabelle tr:nth-child(even) {
+  background-color: #fafafa;
+}
+
+.arbeitszeiten-tabelle tr:hover {
+  background-color: #e6f7ff;
+}
+
+
 .wrapper {
   display: flex;
   flex-direction: column;
@@ -189,11 +298,16 @@ header h1 {
   cursor: default;
 }
 
-.entry {
+.entries-section {
   margin-top: 2rem;
-  padding: 1rem;
+  width: 300px;
+}
+
+.entry {
   background: white;
+  margin: 1rem 0;
+  padding: 1rem;
   border-radius: 8px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 </style>

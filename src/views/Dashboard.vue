@@ -72,6 +72,12 @@ function submitForm() {
   toggleForm(); // Formular schließen
 }
 function deleteUserFromStorage(user) {
+  const loggedInUser = JSON.parse(localStorage.getItem('loggedInUser'));
+  
+  if (user.id === loggedInUser?.id) {
+    alert("Du kannst dich nicht selbst löschen!");
+    return;
+  }
   if (confirm(`Möchtest du ${user.vorname} ${user.nachname} wirklich löschen?`)) {
     deleteUser(user.id);
     deleteWorkTimesByUser(user.id);

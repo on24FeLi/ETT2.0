@@ -20,6 +20,7 @@ function logout() {
         <nav class="nav-bar">
           <a href="Tagesanzeige">Tagesanzeige</a>
           <a href="Wochenansicht">Wochenansicht</a>
+          <a href="Monatsansicht">Monatsansicht</a>
           <a v-if="showDashboard" href="Dashboard">Dashboard</a>
           <button @click="logout" id="logout">Logout 
             <img src="/public/rechter-pfeil.png" alt="Logout" />

@@ -102,7 +102,7 @@ function calculateDifference(workinghours) {
 </script>
 
 <template>
-  
+  <navigation></navigation>
 
     <div class="calendar">
       <div class="calendar-header">

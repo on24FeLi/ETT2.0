@@ -60,6 +60,7 @@ function getWeekdayAbbreviation(dateString) {
 }
 </script>
 <template>
+  <navigation></navigation>
   <div class="monatsansicht-container">
     <div class="monatsansicht-navigation">
       <button @click="monthOffset--">←</button>

@@ -16,7 +16,11 @@ function showMonatsListe() {
 </script>
 
 <template>
-    <navigation> </navigation>
+  <div>
+     <header>
+      <h1>Monatsansicht</h1>
+      <navigation></navigation>
+    </header>
     <div class="border">
   <div class="switcher-container">
     <div class="button-group">
@@ -28,7 +32,9 @@ function showMonatsListe() {
       <Kalenderansicht v-if="currentView === 'kalender'" />
       <Monatsansichtliste v-else />
     </div>
-  </div></div>
+  </div>
+  </div>
+  </div>
 </template>
 
 <style scoped>

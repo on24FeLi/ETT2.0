@@ -114,7 +114,6 @@ function resetForm() {
     <header>
       <h1>Dashboard</h1>
       <navigation></navigation>
-      <div class="logo">🕒 <span>ETT</span></div>
     </header>
 
     <div class="dashboard-container">

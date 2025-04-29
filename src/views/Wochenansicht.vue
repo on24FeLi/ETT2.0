@@ -67,8 +67,7 @@ function getWeekdayAbbreviation(dateString) {
       <header>
       <h1>Wochenansicht</h1>
       <navigation></navigation>
-      <div class="logo">🕒 <span>ETT</span></div>
-    </header>
+      </header>
   
       <div class="wochenansicht-container">
         <h2>Arbeitszeiten – Wochenübersicht</h2>

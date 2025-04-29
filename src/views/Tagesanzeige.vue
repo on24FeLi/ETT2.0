@@ -156,7 +156,6 @@ const todaysStoredHours = computed(() => {
     <header>
       <h1>Tagesansicht</h1>
       <navigation></navigation>
-      <div class="logo">🕒 <span>ETT</span></div>
     </header>
   
     <main class="content">

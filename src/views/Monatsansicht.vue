@@ -38,6 +38,20 @@ function showMonatsListe() {
 </template>
 
 <style scoped>
+header {
+  background-color: #f1ecdb;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  border-bottom: 1px solid #ccc;
+}
+
+header h1 {
+  font-size: 2rem;
+  padding: 0.2rem 1rem;
+  display: inline-block;
+}
 .border{
   border: 2px solid #ccc;
   border-radius: 10px;

@@ -6,6 +6,7 @@ import Dashboard from '../views/Dashboard.vue'
 import Wochenansicht from '@/views/Wochenansicht.vue';
 import Splash from '@/components/Splash.vue';
 import Monatsansicht from '../views/Monatsansicht.vue';
+import Jahresansicht from '@/views/Jahresansicht.vue';
 //import { hasRole } from '../utils/auth';
 
 const routes = [
@@ -15,7 +16,8 @@ const routes = [
     { path: '/dashboard', component: Dashboard },
     { path: '/Wochenansicht', component: Wochenansicht },
     { path: '/', component: Splash },
-    { path: '/Monatsansicht', component: Monatsansicht}
+    { path: '/Monatsansicht', component: Monatsansicht},
+    {path: '/Jahresansicht', component: Jahresansicht}
 ];
 
 const router = createRouter({

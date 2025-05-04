@@ -60,6 +60,24 @@ function getWeekdayAbbreviation(dateString) {
   const date = new Date(dateString);
   return days[date.getDay()];
 }
+const totalWorkingHours = computed(() => {
+  return workTimes.value.reduce((sum, entry) => sum + parseFloat(entry.workinghours), 0);
+});
+
+// Sollstunden pro Woche
+const weeklyTarget = computed(() => {
+  return arbeitszeitTyp === 'Teilzeit' ? 30 : 40;
+});
+
+// Prozentualer Fortschritt
+const progressPercent = computed(() => {
+  return Math.min(100, (totalWorkingHours.value / weeklyTarget.value) * 100);
+});
+
+// Verbleibende Stunden
+const remainingHours = computed(() => {
+  return Math.max(0, weeklyTarget.value - totalWorkingHours.value);
+});
 </script>
 
 <template>
@@ -79,7 +97,18 @@ function getWeekdayAbbreviation(dateString) {
           </span>
           <button @click="weekOffset++">Nächste Woche →</button>
         </div>
-  
+        <div class="arbeitsstunden-balken">
+  <p>Geleistete Stunden: {{ totalWorkingHours.toFixed(2) }} / {{ weeklyTarget }} Stunden</p>
+  <div class="progress-bar-container">
+    <div class="progress-bar" :style="{ width: progressPercent + '%' }"></div>
+  </div>
+  <p v-if="totalWorkingHours > weeklyTarget">
+  Überstunden: +{{ (totalWorkingHours - weeklyTarget).toFixed(2) }} 
+</p>
+<p v-else>
+  Verbleibende Stunden: {{ remainingHours.toFixed(2) }} 
+</p>
+</div>
         <table v-if="workTimes.length">
           <thead>
             <tr>
@@ -110,6 +139,27 @@ function getWeekdayAbbreviation(dateString) {
   </template>
 
 <style scoped>
+.arbeitsstunden-balken {
+  margin-top: 2rem;
+  text-align: center;
+  font-size: 1.1rem;
+}
+
+.progress-bar-container {
+  width: 100%;
+  height: 20px;
+  background-color: #eee;
+  border-radius: 10px;
+  overflow: hidden;
+  margin: 0.5rem auto;
+  max-width: 600px;
+}
+
+.progress-bar {
+  height: 100%;
+  background-color: #90AC8F;
+  transition: width 0.3s ease-in-out;
+}
 header {
   background-color: #f1ecdb;
   display: flex;

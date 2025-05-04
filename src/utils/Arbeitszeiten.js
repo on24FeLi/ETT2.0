@@ -26,4 +26,5 @@ addWorkTime(2, "2025-04-22","8" ,"08:00", "16:30");
 addWorkTime(2, "2025-04-23", "6","08:15", "17:00");
 addWorkTime(1, "2025-04-23", "10","08:15", "17:00");
 addWorkTime(1, "2025-04-18", "12","08:15", "17:00");
+addWorkTime(2, "2025-05-04", "40","08:15", "17:00");
 export { workTimes, addWorkTime, getWorkTimesByUser, deleteWorkTimesByUser };

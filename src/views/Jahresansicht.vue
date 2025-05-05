@@ -1,7 +1,8 @@
 <script setup>
 import { ref } from 'vue'
 import navigation from '@/components/navigation.vue';
-import { getWorkTimesByUser } from '@/utils/Arbeitszeiten'
+import { getWorkTimesByUser } from '@/utils/Arbeitszeiten';
+import { computed } from 'vue';
 
 const user = JSON.parse(localStorage.getItem('loggedInUser'));
 const userId = user?.id ?? null;
@@ -71,6 +72,44 @@ function nextYear() {
   selectedDates.value = Array(12).fill(null);
   filteredEntries.value = Array(12).fill([]);
 }
+const allEntries = getWorkTimesByUser(userId);
+
+const totalHoursYear = computed(() => {
+  return allEntries
+    .filter(e => new Date(e.date).getFullYear() === year.value)
+    .reduce((sum, entry) => sum + parseFloat(entry.workinghours), 0);
+});
+
+const workingDaysInYear = computed(() => {
+  let workdays = 0;
+  const currentYear = year.value;
+  for (let m = 0; m < 12; m++) {
+    const daysInMonth = new Date(currentYear, m + 1, 0).getDate();
+    for (let d = 1; d <= daysInMonth; d++) {
+      const date = new Date(currentYear, m, d);
+      const day = date.getDay();
+      if (day !== 0 && day !== 6) workdays++; // Montag–Freitag
+    }
+  }
+  return workdays;
+});
+
+const yearlyTarget = computed(() => {
+  const hoursPerDay = arbeitszeitTyp === 'Teilzeit' ? 6 : 8;
+  return workingDaysInYear.value * hoursPerDay;
+});
+
+const yearlyProgressPercent = computed(() => {
+  return Math.min(100, (totalHoursYear.value / yearlyTarget.value) * 100);
+});
+const yearlyRemainingHours = computed(() => {
+  return Math.max(0, yearlyTarget.value - totalHoursYear.value);
+});
+
+const yearlyOvertime = computed(() => {
+  return Math.max(0, totalHoursYear.value - yearlyTarget.value);
+});
+
 </script>
 <template>
      <header>
@@ -83,7 +122,19 @@ function nextYear() {
       <h2>{{ year }}</h2>
       <button @click="nextYear">›</button>
     </div>
-  
+    <div class="jahresarbeitszeit-balken">
+      <p>Geleistete Stunden: {{ totalHoursYear.toFixed(2) }} / {{ yearlyTarget.toFixed(2) }} Stunden</p>
+<div class="progress-bar-container">
+  <div class="progress-bar" :style="{ width: yearlyProgressPercent + '%' }"></div>
+</div>
+<p v-if="totalHoursYear > yearlyTarget">
+  Überstunden: +{{ yearlyOvertime.toFixed(2) }} Stunden
+</p>
+<p v-else>
+  Verbleibende Stunden: {{ yearlyRemainingHours.toFixed(2) }} Stunden
+</p>
+
+</div>
     <div class="year-grid">
       <div v-for="month in 12" :key="month" class="month">
         <h3>{{ new Date(year, month - 1).toLocaleString('default', { month: 'long' }) }}</h3>
@@ -222,4 +273,25 @@ header h1 {
     background-color: transparent;
     cursor: default;
   }
+  .jahresarbeitszeit-balken {
+  margin: 1rem auto 2rem auto;
+  text-align: center;
+  font-size: 1rem;
+  max-width: 600px;
+}
+
+.progress-bar-container {
+  width: 100%;
+  height: 20px;
+  background-color: #eee;
+  border-radius: 10px;
+  overflow: hidden;
+  margin: 0.5rem auto;
+}
+
+.progress-bar {
+  height: 100%;
+  background-color: #90AC8F;
+  transition: width 0.3s ease-in-out;
+}
   </style>

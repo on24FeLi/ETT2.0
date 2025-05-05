@@ -19,9 +19,15 @@ function logout() {
 <header class="header">
         <nav class="nav-bar">
           <a href="Tagesanzeige">Tagesanzeige</a>
-          <a href="Wochenansicht">Wochenansicht</a>
-          <a href="Monatsansicht">Monatsansicht</a>
-          <a href="Jahresansicht">Jahresansicht</a>
+          <div class="dropdown">
+  <button class="dropbtn">Ansichten <span class="chevron"></span></button>
+  <div class="dropdown-content">
+    <a href="Wochenansicht">Wochenansicht</a>
+    <a href="Monatsansicht">Monatsansicht</a>
+    <a href="Jahresansicht">Jahresansicht</a>
+  </div>
+</div>
+
           <a v-if="showDashboard" href="Dashboard">Dashboard</a>
           <button @click="logout" id="logout">Logout 
             <img src="/public/rechter-pfeil.png" alt="Logout"/>
@@ -92,4 +98,65 @@ img {
   height: 150px;
   width: 150px;
 }
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropbtn {
+  font-weight: bold;
+  color: black;
+  font-family: Georgia, serif;
+  font-size: 16px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background-color: #F2EDDB;
+  border: none;
+  cursor: pointer;
+}
+
+.dropbtn:hover {
+  background-color: #ddd;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: white;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px rgba(0,0,0,0.2);
+  z-index: 1;
+  flex-direction: column;
+}
+
+.dropdown-content a {
+  color: black;
+  padding: 8px 12px;
+  text-decoration: none;
+  display: block;
+  background-color: white;
+}
+
+.dropdown-content a:hover {
+  background-color: #ddd;
+}
+
+.dropdown:hover .dropdown-content {
+  display: flex;
+}
+.chevron {
+  display: inline-block;
+  margin-left: 5px;
+  width: 8px;
+  height: 8px;
+  border-right: 2px solid black;
+  border-bottom: 2px solid black;
+  transform: rotate(45deg);
+  transition: transform 0.3s ease;
+}
+
+.dropdown:hover .chevron {
+  transform: rotate(-135deg);
+}
+
 </style>

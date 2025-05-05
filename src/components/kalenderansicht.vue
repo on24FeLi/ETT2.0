@@ -105,9 +105,9 @@ function calculateDifference(workinghours) {
 
     <div class="calendar">
       <div class="calendar-header">
-        <button @click="prevMonth">‹</button>
+        <button @click="prevMonth">←</button>
         <div>{{ monthYear }}</div>
-        <button @click="nextMonth">›</button>
+        <button @click="nextMonth">→</button>
       </div>
 
       <div class="calendar-days">
@@ -250,17 +250,18 @@ header h1 {
 }
 
 .calendar-header button {
-  background-color: #ddd;
+  background-color: #f3e9d2;
   border: none;
-  padding: 0.5rem 1rem;
-  border-radius: 6px;
-  font-size: 1.2rem;
+  padding: 0.6rem 1.2rem;
+  border-radius: 8px;
+  font-weight: bold;
+  font-size: 17px;
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  transition: background-color 0.3s ease;
 }
 
 .calendar-header button:hover {
-  background-color: #ccc;
+  background-color: #e0dcca;
 }
 
 .calendar-days, .calendar-dates {

@@ -118,9 +118,9 @@ const yearlyOvertime = computed(() => {
     </header>
   
     <div class="year-header">
-      <button @click="prevYear">‹</button>
+      <button @click="prevYear">←</button>
       <h2>{{ year }}</h2>
-      <button @click="nextYear">›</button>
+      <button @click="nextYear">→</button>
     </div>
     <div class="jahresarbeitszeit-balken">
       <p>Geleistete Stunden: {{ totalHoursYear.toFixed(2) }} / {{ yearlyTarget.toFixed(2) }} Stunden</p>
@@ -204,6 +204,21 @@ header h1 {
     align-items: center;
     gap: 1rem;
     margin-top: 2rem;
+  }
+  
+  .year-header button{
+    background-color: #f3e9d2;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 8px;
+  font-weight: bold;
+  font-size: 17px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  }
+
+  .year-header button:hover{
+    background-color: #e0dcca;
   }
   
   .year-grid {

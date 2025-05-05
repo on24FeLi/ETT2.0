@@ -2,6 +2,8 @@
 import { ref, computed } from 'vue';
 import navigation from '@/components/navigation.vue';
 import { getWorkTimesByUser } from '@/utils/Arbeitszeiten';
+import DayEditor from '@/components/DayEditor.vue';
+
 
 // Eingeloggten Benutzer laden
 const user = JSON.parse(localStorage.getItem('loggedInUser'));
@@ -134,6 +136,7 @@ const remainingHours = computed(() => {
         </table>
   
         <p v-else>Keine Einträge für diese Woche.</p>
+        <DayEditor :userId="userId" :arbeitszeitTyp="arbeitszeitTyp" />
       </div>
     </div>
   </template>

@@ -39,8 +39,11 @@ function userLogin() {
 </script>
 <template>
   <div class="wrapper">
+    <div class="header-logo">
+  <img src="/LOGO_ETT.png" alt="ETT Logo" />
+</div>
     <main class="content">
-      <uhrzeit />
+      <uhrzeit /> 
       <div class="timer-box">
         <h1 class="title">Login</h1>
         <div class="info">
@@ -109,7 +112,7 @@ button {
 button:hover {
     transform: scale(1.05);
   }
-  
+
   .timer-box {
   background-color: #F2EDDB;
   padding: 30px;
@@ -137,4 +140,18 @@ button:hover {
   margin-bottom: 20px;
   margin-top: 0;
 }
+.header-logo {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  z-index: 10;
+}
+
+.header-logo img {
+  width: 150px;
+  height: auto;
+  display: block;
+  padding-right: 40px;
+}
+
 </style>

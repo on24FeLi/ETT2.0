@@ -1,10 +1,10 @@
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed } from "vue";
 
-import { getWorkTimesByUser } from '@/utils/Arbeitszeiten';
+import { getWorkTimesByUser } from "@/utils/Arbeitszeiten";
 
 // Eingeloggten Benutzer laden
-const user = JSON.parse(localStorage.getItem('loggedInUser'));
+const user = JSON.parse(localStorage.getItem("loggedInUser"));
 const userId = user?.id ?? null;
 const arbeitszeitTyp = user?.arbeitszeitTyp ?? "Vollzeit";
 
@@ -39,7 +39,7 @@ const monthRange = computed(() => {
 const workTimes = computed(() => {
   if (!userId) return [];
   const allTimes = getWorkTimesByUser(userId);
-  return allTimes.filter(entry => {
+  return allTimes.filter((entry) => {
     const entryDate = toDateOnly(entry.date);
     const start = toDateOnly(monthRange.value.start);
     const end = toDateOnly(monthRange.value.end);
@@ -49,12 +49,12 @@ const workTimes = computed(() => {
 
 // Soll-Stunden pro Tag
 const sollStunden = computed(() => {
-  return arbeitszeitTyp === 'Teilzeit' ? 6 : 8;
+  return arbeitszeitTyp === "Teilzeit" ? 6 : 8;
 });
 
 // Hilfsfunktion: Wochentags-Abkürzung
 function getWeekdayAbbreviation(dateString) {
-  const days = ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'];
+  const days = ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"];
   const date = new Date(dateString);
   return days[date.getDay()];
 }
@@ -93,34 +93,29 @@ const monthlyOvertime = computed(() => {
 const monthlyRemaining = computed(() => {
   return Math.max(0, monthlyTarget.value - totalWorkingHours.value);
 });
-
 </script>
 <template>
   <navigation></navigation>
   <div class="monatsansicht-container">
-  
-    
-  
     <div class="monatsansicht-table-container">
       <div class="monatsansicht-navigation">
-      <button @click="monthOffset--">←</button>
-      <span>
-        {{ monthRange.start.toLocaleDateString('de-DE', { month: 'long', year: 'numeric' }) }}
-      </span>
-      <button @click="monthOffset++">→</button>
-    </div>
+        <button @click="monthOffset--">←</button>
+        <span>
+          {{ monthRange.start.toLocaleDateString("de-DE", { month: "long", year: "numeric" }) }}
+        </span>
+        <button @click="monthOffset++">→</button>
+      </div>
       <div class="monatsarbeitszeit-balken">
-  <p>Geleistete Stunden: {{ totalWorkingHours.toFixed(2) }} / {{ monthlyTarget.toFixed(2) }} Stunden</p>
-  <div class="progress-bar-container">
-    <div class="progress-bar" :style="{ width: progressPercent + '%' }"></div>
-  </div>
-  <p v-if="monthlyOvertime > 0">
-    Überstunden: +{{ monthlyOvertime.toFixed(2) }} Stunden
-  </p>
-  <p v-else>
-    Verbleibende Stunden: {{ monthlyRemaining.toFixed(2) }} Stunden
-  </p>
-</div>
+        <p>
+          Geleistete Stunden: {{ totalWorkingHours.toFixed(2) }} /
+          {{ monthlyTarget.toFixed(2) }} Stunden
+        </p>
+        <div class="progress-bar-container">
+          <div class="progress-bar" :style="{ width: progressPercent + '%' }"></div>
+        </div>
+        <p v-if="monthlyOvertime > 0">Überstunden: +{{ monthlyOvertime.toFixed(2) }} Stunden</p>
+        <p v-else>Verbleibende Stunden: {{ monthlyRemaining.toFixed(2) }} Stunden</p>
+      </div>
       <table v-if="workTimes.length">
         <thead>
           <tr>
@@ -133,9 +128,13 @@ const monthlyRemaining = computed(() => {
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(entry, index) in workTimes" :key="index" :class="{ 'odd-row': index % 2 === 1 }">
+          <tr
+            v-for="(entry, index) in workTimes"
+            :key="index"
+            :class="{ 'odd-row': index % 2 === 1 }"
+          >
             <td>{{ getWeekdayAbbreviation(entry.date) }}</td>
-            <td>{{ new Date(entry.date).toLocaleDateString('de-DE') }}</td>
+            <td>{{ new Date(entry.date).toLocaleDateString("de-DE") }}</td>
             <td>{{ entry.start }}</td>
             <td>{{ entry.end }}</td>
             <td>{{ entry.workinghours }}</td>
@@ -166,15 +165,14 @@ const monthlyRemaining = computed(() => {
 
 .progress-bar {
   height: 100%;
-  background-color: #90AC8F;
+  background-color: #90ac8f;
   transition: width 0.3s ease-in-out;
 }
 .monatsansicht-container {
-display: flex;
+  display: flex;
   flex-direction: column;
   align-items: center;
   padding: 2rem;
- 
 }
 
 .monatsansicht-navigation {
@@ -194,7 +192,6 @@ display: flex;
   font-size: 17px;
   cursor: pointer;
   transition: background-color 0.3s ease;
-
 }
 
 .monatsansicht-navigation button:hover {
@@ -216,7 +213,8 @@ table {
   text-align: center;
 }
 
-th, td {
+th,
+td {
   padding: 1rem;
   border-bottom: 1px solid #eee;
 }
@@ -241,6 +239,5 @@ tbody tr.odd-row {
 p {
   text-align: center;
   margin-top: 2rem;
-  
 }
 </style>

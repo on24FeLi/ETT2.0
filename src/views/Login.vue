@@ -66,7 +66,7 @@ function userLogin() {
   }
 h1 {
   color: #333;
-  font-family: "Arial";
+ 
 }
 .content {
     flex: 1;

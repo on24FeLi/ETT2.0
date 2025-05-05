@@ -149,6 +149,18 @@ const todaysStoredHours = computed(() => {
 
   return `${totalHours}h ${totalMinutes}min`;
 });
+const dailyProgress = computed(() => {
+  const userData = JSON.parse(localStorage.getItem('loggedInUser'));
+  if (!userData) return 0;
+
+  const target = userData.arbeitszeitTyp === 'Teilzeit' ? 6 : 8;
+  const today = new Date().toISOString().split('T')[0];
+  const entries = JSON.parse(localStorage.getItem('workTimes')) || [];
+  const todayEntry = entries.find(e => e.userId === userData.id && e.date === today);
+
+  const worked = todayEntry ? parseFloat(todayEntry.workinghours) : 0;
+  return Math.min(100, (worked / target) * 100); // Prozentwert
+});
 </script>
 
 <template>
@@ -160,7 +172,35 @@ const todaysStoredHours = computed(() => {
   
     <main class="content">
       <h2 class="title">Hallo, {{ userName || 'Benutzer' }}!</h2>
-      <Uhrzeit></Uhrzeit>
+      <div class="halbkreis-wrapper">
+  <svg class="halbkreis" viewBox="0 0 200 110">
+    <!-- Hintergrundpfad -->
+    <path
+      d="M 20 100 A 80 80 0 0 1 180 100"
+      stroke="#e0e0e0"
+      stroke-width="15"
+      fill="none"
+    />
+    <!-- Fortschrittsbalken -->
+    <path
+      d="M 20 100 A 80 80 0 0 1 180 100"
+      stroke="url(#progressGradient)"
+      stroke-width="15"
+      fill="none"
+      :stroke-dasharray="251.2"
+      :stroke-dashoffset="251.2 - (251.2 * dailyProgress / 100)"
+      stroke-linecap="round"
+    />
+    <defs>
+      <linearGradient id="progressGradient" x1="0%" y1="100%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#4b8075" />
+        <stop offset="100%" stop-color="#90AC8F" />
+      </linearGradient>
+    </defs>
+  </svg>
+  <Uhrzeit  class="clock-centered" />
+</div>
+
       <div class="timer-box">
         <h1 class="title">Zeiterfassung</h1>
         <h2 class="title">{{ formattedTime }}</h2>
@@ -176,6 +216,9 @@ const todaysStoredHours = computed(() => {
 </template>
   
   <style scoped>
+  .clock-centered {
+  margin-bottom: 10px;
+}
   * {
     box-sizing: border-box;
   }
@@ -221,6 +264,7 @@ header h1 {
     align-items: center;
     text-align: center;
     padding: 40px 20px;
+    background-color: white;
   }
   
   .title {
@@ -258,7 +302,7 @@ header h1 {
   .timer-box {
   background-color: #F2EDDB;
   padding: 30px;
-  border: 2px solid black;
+  border: 2px solid lightgray;
   border-radius: 25px;
   display: flex;
   flex-direction: column;
@@ -270,4 +314,26 @@ header h1 {
   font-size: 28px;
   margin-bottom: 10px;
 }
+/* Progress */
+.halbkreis-wrapper {
+  position: relative;
+  width: 300px;
+  height: 160px;
+  margin-bottom: 1rem;
+}
+
+.halbkreis {
+  width: 100%;
+  height: 100%;
+}
+
+.halbkreis-wrapper > *:not(svg) {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+  z-index: 2;
+}
+
   </style>

@@ -27,7 +27,7 @@ function logout() {
     <a href="Jahresansicht">Jahresansicht</a>
   </div>
 </div>
-
+<a href="Urlaub">Urlaub</a>
           <a v-if="showDashboard" href="Dashboard">Dashboard</a>
           <button @click="logout" id="logout">Logout 
             <img src="/public/rechter-pfeil.png" alt="Logout"/>

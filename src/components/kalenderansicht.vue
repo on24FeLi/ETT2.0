@@ -1,8 +1,8 @@
 <script setup>
-import { ref, onMounted, computed } from 'vue'
-import { getWorkTimesByUser } from '@/utils/Arbeitszeiten';
+import { ref, onMounted, computed } from "vue";
+import { getWorkTimesByUser } from "@/utils/Arbeitszeiten";
 
-const user = JSON.parse(localStorage.getItem('loggedInUser'));
+const user = JSON.parse(localStorage.getItem("loggedInUser"));
 const userId = user?.id ?? null;
 const arbeitszeitTyp = user?.arbeitszeitTyp ?? "Vollzeit";
 // Aktuelles Datum
@@ -13,8 +13,8 @@ const filteredEntries = ref([]);
 
 // Monat + Jahr als Computed Property
 const monthYear = computed(() => {
-  return `${date.value.toLocaleString('default', { month: 'long' })} ${date.value.getFullYear()}`
-})
+  return `${date.value.toLocaleString("default", { month: "long" })} ${date.value.getFullYear()}`;
+});
 
 // Funktion, um den Kalender zu erstellen
 function renderCalendar() {
@@ -28,7 +28,7 @@ function renderCalendar() {
 
   // Leere Felder für Tage vor dem 1.
   for (let i = 0; i < firstDay; i++) {
-    tempDays.push('');
+    tempDays.push("");
   }
 
   // Tage des Monats
@@ -53,14 +53,14 @@ function selectDate(day) {
   if (!day || !userId) return;
 
   const year = date.value.getFullYear();
-  const month = String(date.value.getMonth() + 1).padStart(2, '0');
-  const dayString = String(day).padStart(2, '0');
+  const month = String(date.value.getMonth() + 1).padStart(2, "0");
+  const dayString = String(day).padStart(2, "0");
   const fullDate = `${year}-${month}-${dayString}`;
 
   selectedDate.value = fullDate;
 
   const allUserEntries = getWorkTimesByUser(userId);
-  filteredEntries.value = allUserEntries.filter(entry => entry.date === fullDate);
+  filteredEntries.value = allUserEntries.filter((entry) => entry.date === fullDate);
 }
 
 onMounted(() => {
@@ -72,31 +72,31 @@ onMounted(() => {
 // Hilfsfunktion: Überstunden / Minusstunden berechnen
 
 function getDayClass(day) {
-  if (!day) return 'empty';
+  if (!day) return "empty";
 
   const year = date.value.getFullYear();
-  const month = String(date.value.getMonth() + 1).padStart(2, '0');
-  const dayString = String(day).padStart(2, '0');
+  const month = String(date.value.getMonth() + 1).padStart(2, "0");
+  const dayString = String(day).padStart(2, "0");
   const fullDate = `${year}-${month}-${dayString}`;
 
   const allUserEntries = getWorkTimesByUser(userId);
-  const entry = allUserEntries.find(entry => entry.date === fullDate);
+  const entry = allUserEntries.find((entry) => entry.date === fullDate);
 
   if (entry) {
     // Dynamische Sollstunden je nach Arbeitszeittyp
-    const sollStunden = arbeitszeitTyp === 'Teilzeit' ? 6 : 8;
+    const sollStunden = arbeitszeitTyp === "Teilzeit" ? 6 : 8;
     const gearbeitet = parseFloat(entry.workinghours);
     if (gearbeitet >= sollStunden) {
-      return 'enough-worked';
+      return "enough-worked";
     } else {
-      return 'not-enough-worked';
+      return "not-enough-worked";
     }
   } else {
-    return ''; // normaler Tag ohne extra Farbe
+    return ""; // normaler Tag ohne extra Farbe
   }
 }
 function calculateDifference(workinghours) {
-  const sollStunden = arbeitszeitTyp === 'Teilzeit' ? 6 : 8;
+  const sollStunden = arbeitszeitTyp === "Teilzeit" ? 6 : 8;
   return (parseFloat(workinghours) - sollStunden).toFixed(2);
 }
 const totalWorkingHours = computed(() => {
@@ -105,12 +105,9 @@ const totalWorkingHours = computed(() => {
   const currentYear = date.value.getFullYear();
 
   return all
-    .filter(e => {
+    .filter((e) => {
       const entryDate = new Date(e.date);
-      return (
-        entryDate.getMonth() === currentMonth &&
-        entryDate.getFullYear() === currentYear
-      );
+      return entryDate.getMonth() === currentMonth && entryDate.getFullYear() === currentYear;
     })
     .reduce((sum, e) => sum + parseFloat(e.workinghours), 0);
 });
@@ -129,7 +126,7 @@ const workingDaysInMonth = computed(() => {
 });
 
 const monthlyTarget = computed(() => {
-  const hoursPerDay = arbeitszeitTyp === 'Teilzeit' ? 6 : 8;
+  const hoursPerDay = arbeitszeitTyp === "Teilzeit" ? 6 : 8;
   return workingDaysInMonth.value * hoursPerDay;
 });
 
@@ -147,6 +144,7 @@ const monthlyRemaining = computed(() => {
 </script>
 
 <template>
+<<<<<<< HEAD
 
     <div class="calendar">
       <div class="calendar-header">
@@ -207,11 +205,72 @@ const monthlyRemaining = computed(() => {
       </tr>
     </tbody>
   </table>
+=======
+  <div class="calendar">
+    <div class="calendar-header">
+      <button @click="prevMonth">‹</button>
+      <div>{{ monthYear }}</div>
+      <button @click="nextMonth">›</button>
     </div>
- 
+    <div class="progress-section">
+      <p>
+        Geleistete Stunden: {{ totalWorkingHours.toFixed(2) }} /
+        {{ monthlyTarget.toFixed(2) }} Stunden
+      </p>
+      <div class="progress-bar-container">
+        <div class="progress-bar" :style="{ width: progressPercent + '%' }"></div>
+      </div>
+      <p v-if="monthlyOvertime > 0">Überstunden: +{{ monthlyOvertime.toFixed(2) }} Stunden</p>
+      <p v-else>Verbleibende Stunden: {{ monthlyRemaining.toFixed(2) }} Stunden</p>
+    </div>
+    <div class="calendar-days">
+      <div>Sun</div>
+      <div>Mon</div>
+      <div>Tue</div>
+      <div>Wed</div>
+      <div>Thu</div>
+      <div>Fri</div>
+      <div>Sat</div>
+>>>>>>> refs/remotes/origin/main
+    </div>
 
-    <p v-else>Keine Zeiteinträge für diesen Tag.</p>
-   </div>
+    <div class="calendar-dates">
+      <div
+        v-for="(day, index) in days"
+        :key="index"
+        :class="getDayClass(day)"
+        @click="selectDate(day)"
+      >
+        {{ day }}
+      </div>
+    </div>
+
+    <div v-if="selectedDate" class="entries-section">
+      <h4>Zeiteinträge für den {{ new Date(selectedDate).toLocaleDateString("de-DE") }}</h4>
+
+      <div v-if="filteredEntries.length">
+        <table class="arbeitszeiten-tabelle">
+          <thead>
+            <tr>
+              <th>Beginn</th>
+              <th>Ende</th>
+              <th>Arbeitszeit (h)</th>
+              <th>Überstunden</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="(entry, index) in filteredEntries" :key="index">
+              <td>{{ entry.start }}</td>
+              <td>{{ entry.end }}</td>
+              <td>{{ entry.workinghours }}</td>
+              <td>{{ calculateDifference(entry.workinghours) }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p v-else>Keine Zeiteinträge für diesen Tag.</p>
+    </div>
   </div>
 </template>
 
@@ -234,14 +293,13 @@ const monthlyRemaining = computed(() => {
 
 .progress-bar {
   height: 100%;
-  background-color: #90AC8F;
+  background-color: #90ac8f;
   transition: width 0.3s ease-in-out;
 }
 .arbeitszeiten-tabelle {
   width: 100%;
   border-collapse: collapse;
   margin-top: 1rem;
- 
 }
 
 .enough-worked {
@@ -268,7 +326,6 @@ const monthlyRemaining = computed(() => {
 .arbeitszeiten-tabelle th {
   background-color: #f0f0f0;
   font-weight: bold;
- 
 }
 
 .arbeitszeiten-tabelle tr:nth-child(even) {
@@ -279,18 +336,17 @@ const monthlyRemaining = computed(() => {
   background-color: #e6f7ff;
 }
 
-
 .wrapper {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  background-color: #F2EDDB;
-  font-family: 'Inter', Arial, sans-serif;
+  background-color: #f2eddb;
+  font-family: "Inter", Arial, sans-serif;
   padding: 2rem;
 }
 
 header {
-  background-color: #F2EDDB;
+  background-color: #f2eddb;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -341,7 +397,8 @@ header h1 {
   background-color: #e0dcca;
 }
 
-.calendar-days, .calendar-dates {
+.calendar-days,
+.calendar-dates {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   text-align: center;
@@ -385,6 +442,6 @@ header h1 {
   margin: 1rem 0;
   padding: 1rem;
   border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 </style>

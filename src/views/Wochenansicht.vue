@@ -93,11 +93,11 @@ const remainingHours = computed(() => {
         <h2>Arbeitszeiten – Wochenübersicht</h2>
   
         <div class="wochen-navigation">
-          <button @click="weekOffset--">← Vorherige Woche</button>
+          <button @click="weekOffset--">←</button>
           <span>
             {{ weekRange.start.toLocaleDateString('de-DE') }} – {{ weekRange.end.toLocaleDateString('de-DE') }}
           </span>
-          <button @click="weekOffset++">Nächste Woche →</button>
+          <button @click="weekOffset++">→</button>
         </div>
         <div class="arbeitsstunden-balken">
   <p>Geleistete Stunden: {{ totalWorkingHours.toFixed(2) }} / {{ weeklyTarget }} Stunden</p>
@@ -213,19 +213,18 @@ h2 {
 }
 
 .wochen-navigation button {
-  background-color: #e5e5e5;
-  color: #222;
-  border: 1px solid #aaa;
-  padding: 0.5rem 1rem;
-  border-radius: 0.4rem;
-  font-size: 1rem;
-  font-weight: 500;
+  background-color: #f3e9d2;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 8px;
+  font-weight: bold;
+  font-size: 17px;
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  transition: background-color 0.3s ease;
 }
 
 .wochen-navigation button:hover {
-  background-color: #d4d4d4;
+  background-color: #e0dcca;
 }
 
 .wochen-navigation span {

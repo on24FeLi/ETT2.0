@@ -7,6 +7,7 @@ import Wochenansicht from '@/views/Wochenansicht.vue';
 import Splash from '@/components/Splash.vue';
 import Monatsansicht from '../views/Monatsansicht.vue';
 import Jahresansicht from '@/views/Jahresansicht.vue';
+import Urlaub from '@/views/Urlaub.vue';
 //import { hasRole } from '../utils/auth';
 
 const routes = [
@@ -17,7 +18,8 @@ const routes = [
     { path: '/Wochenansicht', component: Wochenansicht },
     { path: '/', component: Splash },
     { path: '/Monatsansicht', component: Monatsansicht},
-    {path: '/Jahresansicht', component: Jahresansicht}
+    {path: '/Jahresansicht', component: Jahresansicht},
+    {path: '/Urlaub', component: Urlaub }
 ];
 
 const router = createRouter({

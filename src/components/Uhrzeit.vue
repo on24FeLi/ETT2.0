@@ -19,5 +19,5 @@ minute: '2-digit'})
 <style scoped>
 .clock {
     font-size: 60px;
-    margin-bottom: 100px;
+    
   }</style>

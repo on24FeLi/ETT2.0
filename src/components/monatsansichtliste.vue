@@ -1,10 +1,10 @@
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed } from "vue";
 
-import { getWorkTimesByUser } from '@/utils/Arbeitszeiten';
+import { getWorkTimesByUser } from "@/utils/Arbeitszeiten";
 
 // Eingeloggten Benutzer laden
-const user = JSON.parse(localStorage.getItem('loggedInUser'));
+const user = JSON.parse(localStorage.getItem("loggedInUser"));
 const userId = user?.id ?? null;
 const arbeitszeitTyp = user?.arbeitszeitTyp ?? "Vollzeit";
 
@@ -39,7 +39,7 @@ const monthRange = computed(() => {
 const workTimes = computed(() => {
   if (!userId) return [];
   const allTimes = getWorkTimesByUser(userId);
-  return allTimes.filter(entry => {
+  return allTimes.filter((entry) => {
     const entryDate = toDateOnly(entry.date);
     const start = toDateOnly(monthRange.value.start);
     const end = toDateOnly(monthRange.value.end);
@@ -49,28 +49,73 @@ const workTimes = computed(() => {
 
 // Soll-Stunden pro Tag
 const sollStunden = computed(() => {
-  return arbeitszeitTyp === 'Teilzeit' ? 6 : 8;
+  return arbeitszeitTyp === "Teilzeit" ? 6 : 8;
 });
 
 // Hilfsfunktion: Wochentags-Abkürzung
 function getWeekdayAbbreviation(dateString) {
-  const days = ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'];
+  const days = ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"];
   const date = new Date(dateString);
   return days[date.getDay()];
 }
+// Monatliche Gesamtstunden
+const totalWorkingHours = computed(() => {
+  return workTimes.value.reduce((sum, entry) => sum + parseFloat(entry.workinghours), 0);
+});
+
+// Anzahl Arbeitstage (Mo–Fr) im aktuellen Monat
+const workingDaysInMonth = computed(() => {
+  let workdays = 0;
+  const start = monthRange.value.start;
+  const end = monthRange.value.end;
+
+  for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
+    const day = d.getDay();
+    if (day !== 0 && day !== 6) workdays++;
+  }
+  return workdays;
+});
+
+// Monatliches Soll
+const monthlyTarget = computed(() => {
+  return workingDaysInMonth.value * sollStunden.value;
+});
+
+// Fortschritt in Prozent
+const progressPercent = computed(() => {
+  return Math.min(100, (totalWorkingHours.value / monthlyTarget.value) * 100);
+});
+
+// Überstunden / Minusstunden
+const monthlyOvertime = computed(() => {
+  return Math.max(0, totalWorkingHours.value - monthlyTarget.value);
+});
+const monthlyRemaining = computed(() => {
+  return Math.max(0, monthlyTarget.value - totalWorkingHours.value);
+});
 </script>
 <template>
   <navigation></navigation>
   <div class="monatsansicht-container">
-    <div class="monatsansicht-navigation">
-      <button @click="monthOffset--">←</button>
-      <span>
-        {{ monthRange.start.toLocaleDateString('de-DE', { month: 'long', year: 'numeric' }) }}
-      </span>
-      <button @click="monthOffset++">→</button>
-    </div>
-
     <div class="monatsansicht-table-container">
+      <div class="monatsansicht-navigation">
+        <button @click="monthOffset--">←</button>
+        <span>
+          {{ monthRange.start.toLocaleDateString("de-DE", { month: "long", year: "numeric" }) }}
+        </span>
+        <button @click="monthOffset++">→</button>
+      </div>
+      <div class="monatsarbeitszeit-balken">
+        <p>
+          Geleistete Stunden: {{ totalWorkingHours.toFixed(2) }} /
+          {{ monthlyTarget.toFixed(2) }} Stunden
+        </p>
+        <div class="progress-bar-container">
+          <div class="progress-bar" :style="{ width: progressPercent + '%' }"></div>
+        </div>
+        <p v-if="monthlyOvertime > 0">Überstunden: +{{ monthlyOvertime.toFixed(2) }} Stunden</p>
+        <p v-else>Verbleibende Stunden: {{ monthlyRemaining.toFixed(2) }} Stunden</p>
+      </div>
       <table v-if="workTimes.length">
         <thead>
           <tr>
@@ -83,9 +128,13 @@ function getWeekdayAbbreviation(dateString) {
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(entry, index) in workTimes" :key="index" :class="{ 'odd-row': index % 2 === 1 }">
+          <tr
+            v-for="(entry, index) in workTimes"
+            :key="index"
+            :class="{ 'odd-row': index % 2 === 1 }"
+          >
             <td>{{ getWeekdayAbbreviation(entry.date) }}</td>
-            <td>{{ new Date(entry.date).toLocaleDateString('de-DE') }}</td>
+            <td>{{ new Date(entry.date).toLocaleDateString("de-DE") }}</td>
             <td>{{ entry.start }}</td>
             <td>{{ entry.end }}</td>
             <td>{{ entry.workinghours }}</td>
@@ -99,12 +148,31 @@ function getWeekdayAbbreviation(dateString) {
   </div>
 </template>
 <style scoped>
+.monatsarbeitszeit-balken {
+  text-align: center;
+  margin-bottom: 2rem;
+  font-size: 1rem;
+}
+
+.progress-bar-container {
+  width: 100%;
+  height: 20px;
+  background-color: #eee;
+  border-radius: 10px;
+  overflow: hidden;
+  margin: 0.5rem 0;
+}
+
+.progress-bar {
+  height: 100%;
+  background-color: #90ac8f;
+  transition: width 0.3s ease-in-out;
+}
 .monatsansicht-container {
   display: flex;
   flex-direction: column;
   align-items: center;
   padding: 2rem;
-  margin-top: 2rem;
 }
 
 .monatsansicht-navigation {
@@ -124,7 +192,6 @@ function getWeekdayAbbreviation(dateString) {
   font-size: 17px;
   cursor: pointer;
   transition: background-color 0.3s ease;
-
 }
 
 .monatsansicht-navigation button:hover {
@@ -146,7 +213,8 @@ table {
   text-align: center;
 }
 
-th, td {
+th,
+td {
   padding: 1rem;
   border-bottom: 1px solid #eee;
 }
@@ -171,6 +239,5 @@ tbody tr.odd-row {
 p {
   text-align: center;
   margin-top: 2rem;
-  color: #666;
 }
 </style>

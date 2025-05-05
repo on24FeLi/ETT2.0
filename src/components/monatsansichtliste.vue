@@ -99,14 +99,17 @@ const monthlyRemaining = computed(() => {
   <navigation></navigation>
   <div class="monatsansicht-container">
   
-    <div class="monatsansicht-navigation">
+    
+  
+    <div class="monatsansicht-table-container">
+      <div class="monatsansicht-navigation">
       <button @click="monthOffset--">←</button>
       <span>
         {{ monthRange.start.toLocaleDateString('de-DE', { month: 'long', year: 'numeric' }) }}
       </span>
       <button @click="monthOffset++">→</button>
     </div>
-    <div class="monatsarbeitszeit-balken">
+      <div class="monatsarbeitszeit-balken">
   <p>Geleistete Stunden: {{ totalWorkingHours.toFixed(2) }} / {{ monthlyTarget.toFixed(2) }} Stunden</p>
   <div class="progress-bar-container">
     <div class="progress-bar" :style="{ width: progressPercent + '%' }"></div>
@@ -118,7 +121,6 @@ const monthlyRemaining = computed(() => {
     Verbleibende Stunden: {{ monthlyRemaining.toFixed(2) }} Stunden
   </p>
 </div>
-    <div class="monatsansicht-table-container">
       <table v-if="workTimes.length">
         <thead>
           <tr>
@@ -239,6 +241,6 @@ tbody tr.odd-row {
 p {
   text-align: center;
   margin-top: 2rem;
-  color: #666;
+  
 }
 </style>

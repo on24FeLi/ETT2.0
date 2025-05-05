@@ -144,85 +144,22 @@ const monthlyRemaining = computed(() => {
 </script>
 
 <template>
-<<<<<<< HEAD
-
-    <div class="calendar">
-      <div class="calendar-header">
+  <div class="calendar">
+    <div class="calendar-header">
         <button @click="prevMonth">←</button>
         <div>{{ monthYear }}</div>
         <button @click="nextMonth">→</button>
       </div>
-      <div class="progress-section">
-  <p>Geleistete Stunden: {{ totalWorkingHours.toFixed(2) }} / {{ monthlyTarget.toFixed(2) }} Stunden</p>
-  <div class="progress-bar-container">
-    <div class="progress-bar" :style="{ width: progressPercent + '%' }"></div>
-  </div>
-  <p v-if="monthlyOvertime > 0">
-    Überstunden: +{{ monthlyOvertime.toFixed(2) }} Stunden
-  </p>
-  <p v-else>
-    Verbleibende Stunden: {{ monthlyRemaining.toFixed(2) }} Stunden
-  </p>
-</div>
-      <div class="calendar-days">
-        <div>Sun</div>
-        <div>Mon</div>
-        <div>Tue</div>
-        <div>Wed</div>
-        <div>Thu</div>
-        <div>Fri</div>
-        <div>Sat</div>
-      </div>
 
-      <div class="calendar-dates">
-        <div  v-for="(day, index) in days" 
-    :key="index"
-    :class="getDayClass(day)"
-    @click="selectDate(day)">
-          {{ day }}
-        </div>
-      </div>
-    
-    <div v-if="selectedDate" class="entries-section">
-      <h4>Zeiteinträge für den {{ new Date(selectedDate).toLocaleDateString('de-DE') }}</h4>
-
-    <div v-if="filteredEntries.length">
-      <table class="arbeitszeiten-tabelle">
-    <thead>
-      <tr>
-        <th>Beginn</th>
-        <th>Ende</th>
-        <th>Arbeitszeit (h)</th>
-        <th>Überstunden</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr v-for="(entry, index) in filteredEntries" :key="index">
-        <td>{{ entry.start }}</td>
-        <td>{{ entry.end }}</td>
-        <td>{{ entry.workinghours }}</td>
-        <td>{{ calculateDifference(entry.workinghours) }}</td>
-      </tr>
-    </tbody>
-  </table>
-=======
-  <div class="calendar">
-    <div class="calendar-header">
-      <button @click="prevMonth">‹</button>
-      <div>{{ monthYear }}</div>
-      <button @click="nextMonth">›</button>
-    </div>
     <div class="progress-section">
-      <p>
-        Geleistete Stunden: {{ totalWorkingHours.toFixed(2) }} /
-        {{ monthlyTarget.toFixed(2) }} Stunden
-      </p>
+      <p>Geleistete Stunden: {{ totalWorkingHours.toFixed(2) }} / {{ monthlyTarget.toFixed(2) }} Stunden</p>
       <div class="progress-bar-container">
         <div class="progress-bar" :style="{ width: progressPercent + '%' }"></div>
       </div>
       <p v-if="monthlyOvertime > 0">Überstunden: +{{ monthlyOvertime.toFixed(2) }} Stunden</p>
       <p v-else>Verbleibende Stunden: {{ monthlyRemaining.toFixed(2) }} Stunden</p>
     </div>
+
     <div class="calendar-days">
       <div>Sun</div>
       <div>Mon</div>
@@ -231,7 +168,6 @@ const monthlyRemaining = computed(() => {
       <div>Thu</div>
       <div>Fri</div>
       <div>Sat</div>
->>>>>>> refs/remotes/origin/main
     </div>
 
     <div class="calendar-dates">

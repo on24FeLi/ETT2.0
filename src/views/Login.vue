@@ -43,7 +43,7 @@ function userLogin() {
   <img src="/LOGO_ETT.png" alt="ETT Logo" />
 </div>
     <main class="content">
-      <uhrzeit /> 
+      <uhrzeit class="clock-centered" /> 
       <div class="timer-box">
         <h1 class="title">Login</h1>
         <div class="info">
@@ -58,6 +58,9 @@ function userLogin() {
   </div>
 </template>
 <style scoped>
+.clock-centered {
+  margin-bottom: 100px;
+}
 .wrapper {
     display: flex;
     flex-direction: column;

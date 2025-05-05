@@ -58,19 +58,69 @@ function getWeekdayAbbreviation(dateString) {
   const date = new Date(dateString);
   return days[date.getDay()];
 }
+// Monatliche Gesamtstunden
+const totalWorkingHours = computed(() => {
+  return workTimes.value.reduce((sum, entry) => sum + parseFloat(entry.workinghours), 0);
+});
+
+// Anzahl Arbeitstage (Mo–Fr) im aktuellen Monat
+const workingDaysInMonth = computed(() => {
+  let workdays = 0;
+  const start = monthRange.value.start;
+  const end = monthRange.value.end;
+
+  for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
+    const day = d.getDay();
+    if (day !== 0 && day !== 6) workdays++;
+  }
+  return workdays;
+});
+
+// Monatliches Soll
+const monthlyTarget = computed(() => {
+  return workingDaysInMonth.value * sollStunden.value;
+});
+
+// Fortschritt in Prozent
+const progressPercent = computed(() => {
+  return Math.min(100, (totalWorkingHours.value / monthlyTarget.value) * 100);
+});
+
+// Überstunden / Minusstunden
+const monthlyOvertime = computed(() => {
+  return Math.max(0, totalWorkingHours.value - monthlyTarget.value);
+});
+const monthlyRemaining = computed(() => {
+  return Math.max(0, monthlyTarget.value - totalWorkingHours.value);
+});
+
 </script>
 <template>
   <navigation></navigation>
   <div class="monatsansicht-container">
-    <div class="monatsansicht-navigation">
+  
+    
+  
+    <div class="monatsansicht-table-container">
+      <div class="monatsansicht-navigation">
       <button @click="monthOffset--">←</button>
       <span>
         {{ monthRange.start.toLocaleDateString('de-DE', { month: 'long', year: 'numeric' }) }}
       </span>
       <button @click="monthOffset++">→</button>
     </div>
-
-    <div class="monatsansicht-table-container">
+      <div class="monatsarbeitszeit-balken">
+  <p>Geleistete Stunden: {{ totalWorkingHours.toFixed(2) }} / {{ monthlyTarget.toFixed(2) }} Stunden</p>
+  <div class="progress-bar-container">
+    <div class="progress-bar" :style="{ width: progressPercent + '%' }"></div>
+  </div>
+  <p v-if="monthlyOvertime > 0">
+    Überstunden: +{{ monthlyOvertime.toFixed(2) }} Stunden
+  </p>
+  <p v-else>
+    Verbleibende Stunden: {{ monthlyRemaining.toFixed(2) }} Stunden
+  </p>
+</div>
       <table v-if="workTimes.length">
         <thead>
           <tr>
@@ -99,12 +149,32 @@ function getWeekdayAbbreviation(dateString) {
   </div>
 </template>
 <style scoped>
+.monatsarbeitszeit-balken {
+  text-align: center;
+  margin-bottom: 2rem;
+  font-size: 1rem;
+}
+
+.progress-bar-container {
+  width: 100%;
+  height: 20px;
+  background-color: #eee;
+  border-radius: 10px;
+  overflow: hidden;
+  margin: 0.5rem 0;
+}
+
+.progress-bar {
+  height: 100%;
+  background-color: #90AC8F;
+  transition: width 0.3s ease-in-out;
+}
 .monatsansicht-container {
-  display: flex;
+display: flex;
   flex-direction: column;
   align-items: center;
   padding: 2rem;
-  margin-top: 2rem;
+ 
 }
 
 .monatsansicht-navigation {
@@ -171,6 +241,6 @@ tbody tr.odd-row {
 p {
   text-align: center;
   margin-top: 2rem;
-  color: #666;
+  
 }
 </style>

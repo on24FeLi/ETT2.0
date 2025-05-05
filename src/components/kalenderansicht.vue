@@ -99,6 +99,51 @@ function calculateDifference(workinghours) {
   const sollStunden = arbeitszeitTyp === 'Teilzeit' ? 6 : 8;
   return (parseFloat(workinghours) - sollStunden).toFixed(2);
 }
+const totalWorkingHours = computed(() => {
+  const all = getWorkTimesByUser(userId);
+  const currentMonth = date.value.getMonth();
+  const currentYear = date.value.getFullYear();
+
+  return all
+    .filter(e => {
+      const entryDate = new Date(e.date);
+      return (
+        entryDate.getMonth() === currentMonth &&
+        entryDate.getFullYear() === currentYear
+      );
+    })
+    .reduce((sum, e) => sum + parseFloat(e.workinghours), 0);
+});
+
+const workingDaysInMonth = computed(() => {
+  let workdays = 0;
+  const year = date.value.getFullYear();
+  const month = date.value.getMonth();
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+  for (let d = 1; d <= daysInMonth; d++) {
+    const day = new Date(year, month, d).getDay();
+    if (day !== 0 && day !== 6) workdays++;
+  }
+  return workdays;
+});
+
+const monthlyTarget = computed(() => {
+  const hoursPerDay = arbeitszeitTyp === 'Teilzeit' ? 6 : 8;
+  return workingDaysInMonth.value * hoursPerDay;
+});
+
+const progressPercent = computed(() => {
+  return Math.min(100, (totalWorkingHours.value / monthlyTarget.value) * 100);
+});
+
+const monthlyOvertime = computed(() => {
+  return Math.max(0, totalWorkingHours.value - monthlyTarget.value);
+});
+
+const monthlyRemaining = computed(() => {
+  return Math.max(0, monthlyTarget.value - totalWorkingHours.value);
+});
 </script>
 
 <template>
@@ -109,7 +154,18 @@ function calculateDifference(workinghours) {
         <div>{{ monthYear }}</div>
         <button @click="nextMonth">→</button>
       </div>
-
+      <div class="progress-section">
+  <p>Geleistete Stunden: {{ totalWorkingHours.toFixed(2) }} / {{ monthlyTarget.toFixed(2) }} Stunden</p>
+  <div class="progress-bar-container">
+    <div class="progress-bar" :style="{ width: progressPercent + '%' }"></div>
+  </div>
+  <p v-if="monthlyOvertime > 0">
+    Überstunden: +{{ monthlyOvertime.toFixed(2) }} Stunden
+  </p>
+  <p v-else>
+    Verbleibende Stunden: {{ monthlyRemaining.toFixed(2) }} Stunden
+  </p>
+</div>
       <div class="calendar-days">
         <div>Sun</div>
         <div>Mon</div>
@@ -160,6 +216,27 @@ function calculateDifference(workinghours) {
 </template>
 
 <style scoped>
+.progress-section {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  font-size: 1rem;
+}
+
+.progress-bar-container {
+  width: 100%;
+  max-width: 450px;
+  height: 20px;
+  background-color: #eee;
+  border-radius: 10px;
+  overflow: hidden;
+  margin: 0.5rem auto;
+}
+
+.progress-bar {
+  height: 100%;
+  background-color: #90AC8F;
+  transition: width 0.3s ease-in-out;
+}
 .arbeitszeiten-tabelle {
   width: 100%;
   border-collapse: collapse;

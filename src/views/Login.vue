@@ -48,7 +48,7 @@ function userLogin() {
         <h1 class="title">Login</h1>
         <div class="info">
           <input v-model="userName" type="text" placeholder="E-Mail" id="username" />
-          <input v-model="passWord" type="password" placeholder="Password" id="password" />
+          <input v-model="passWord" type="password" placeholder="Password" @keyup.enter="userLogin" id="password" />
           <div class="buttons">
             <button @click="userLogin" id="login">Login</button>
           </div>

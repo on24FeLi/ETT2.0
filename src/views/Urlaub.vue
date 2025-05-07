@@ -2,7 +2,7 @@
 import { ref, computed, onMounted } from "vue";
 import navigation from '@/components/navigation.vue';
 import CleanKalenderansicht from '@/components/CleanKalenderansicht.vue';
-//import {urlaube} from '@/utils/Urlaubszeiten';
+import {urlaube} from '@/utils/Urlaubszeiten';
 
 // Platzhalter-Komponente für Storno-/Verschiebe-Buttons
 const PlatzhalterAktion = {
@@ -16,26 +16,8 @@ const PlatzhalterAktion = {
       <h1>Urlaub</h1>
       <navigation/>
       </header>
-          <!-- Flex-Container -->
-    <div class="urlaub-container">
-      <form class="urlaub-formular" action="/submit-urlaub" method="post">
-        <label for="startdatum">Urlaubsbeginn</label>
-        <input type="date" id="startdatum" name="startdatum" required>
-
-        <label for="enddatum">Urlaubsende</label>
-        <input type="date" id="enddatum" name="enddatum" required>
-
-        <label for="nachricht">Kommentar (optional)</label>
-        <textarea id="nachricht" name="nachricht" rows="4"></textarea>
-
-        <button type="submit">Antrag senden</button>
-      </form>
-      <!-- Kalender -->
-      <div class="calendar-wrapper">
-        <CleanKalenderansicht />
-      </div>
-    </div>
-    </div>
+     </div>
+<CleanKalenderansicht/>
 </template>
 
 <style scoped>

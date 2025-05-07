@@ -2,7 +2,7 @@
 import { ref, computed, onMounted } from "vue";
 import navigation from '@/components/navigation.vue';
 import CleanKalenderansicht from '@/components/CleanKalenderansicht.vue';
-import {getUrlaubeByUser, deleteUrlaub, getUrlaubeByUser } from '@/utils/Urlaubszeiten';
+import {addUrlaub, deleteUrlaub, getUrlaubeByUser } from '@/utils/Urlaubszeiten';
 const user = JSON.parse(localStorage.getItem('loggedInUser'));
 const userId = user?.id ?? null;
 const urlaubsliste = ref([]);

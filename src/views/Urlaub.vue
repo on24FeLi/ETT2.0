@@ -74,6 +74,7 @@ const PlatzhalterAktion = {
             <th>Startdatum</th>
             <th>Enddatum</th>
             <th>Urlaubstage</th>
+            <th>Kommentar</th>
             <th>Urlaub bearbeiten</th>
           </tr>
         </thead>
@@ -82,6 +83,7 @@ const PlatzhalterAktion = {
             <td>{{ new Date(urlaub.start).toLocaleDateString("de-DE") }}</td>
             <td>{{ new Date(urlaub.end).toLocaleDateString("de-DE") }}</td>
             <td>{{ urlaub.tage }}</td>
+            <td>{{ urlaub.kommentar }}</td>
             <td><PlatzhalterAktion /></td>
           </tr>
         </tbody>

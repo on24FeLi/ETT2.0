@@ -28,11 +28,7 @@ function handleSubmit() {
 
   if (startdatum.value && enddatum.value) {
     addUrlaub(userId, startdatum.value, enddatum.value, kommentar.value);
-<<<<<<< HEAD
     urlaubsliste.value = getUrlaubeByUser(userId);
-=======
-    urlaubsliste.value = getUrlaubeByUser(userId); // Liste aktualisieren
->>>>>>> refs/remotes/origin/main
     startdatum.value = "";
     enddatum.value = "";
     kommentar.value = "";

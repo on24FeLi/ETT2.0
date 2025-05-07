@@ -1,8 +1,9 @@
 <script setup>
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import navigation from "@/components/navigation.vue";
 import { users, addUser, deleteUser, updateUser } from "@/utils/storageTest";
 import { deleteWorkTimesByUser } from "@/utils/Arbeitszeiten";
+
 const editingUser = ref(null);
 const showForm = ref(false);
 
@@ -15,33 +16,35 @@ const form = ref({
   arbeitszeitTyp: "Vollzeit",
 });
 
+const userList = ref(users);
+
+// Aufteilen in aktiv/archiviert
+const activeUsers = computed(() => userList.value.filter(user => !user.isArchived));
+const archivedUsers = computed(() => userList.value.filter(user => user.isArchived));
+
 function toggleForm() {
   showForm.value = !showForm.value;
-
-  if (showForm.value) {
-    // Wenn das Formular geöffnet wird, zurücksetzen
-    resetForm();
-  }
+  if (showForm.value) resetForm();
 }
-const userList = ref(users);
+
 function submitForm() {
-  // Validierung optional
   if (!form.value.nachname || !form.value.vorname || !form.value.email || !form.value.password) {
     alert("Bitte alle Felder ausfüllen!");
     return;
   }
-  const emailExists = users.some(user => 
+
+  const emailExists = users.some(user =>
     user.email.toLowerCase() === form.value.email.toLowerCase() &&
     (!editingUser.value || user.id !== editingUser.value.id)
   );
+
   if (emailExists) {
     alert("Diese E-Mail-Adresse ist bereits vergeben. Bitte eine andere verwenden.");
     return;
   }
+
   if (editingUser.value) {
-    // Bearbeiten
     updateUser(editingUser.value.id, { ...form.value });
-    console.log("Mitarbeiter bearbeitet:", form.value);
   } else {
     addUser(
       form.value.nachname,
@@ -51,40 +54,37 @@ function submitForm() {
       form.value.isHR,
       form.value.arbeitszeitTyp
     );
-
-    console.log("Mitarbeiter hinzugefügt:", form.value);
-
-    console.log("addUser wurde ausgeführt");
-    // Formular zurücksetzen
-    form.value = {
-      nachname: "",
-      vorname: "",
-      email: "",
-      password: "",
-      isHR: false,
-      arbeitszeitTyp: "",
-    };
   }
-  userList.value = [...users];
 
-  // Reset
+  userList.value = [...users];
   resetForm();
-  toggleForm(); // Formular schließen
+  toggleForm();
 }
-function deleteUserFromStorage(user) {
-  const loggedInUser = JSON.parse(localStorage.getItem('loggedInUser'));
-  
+
+function archiveUser(user) {
+  const loggedInUser = JSON.parse(localStorage.getItem("loggedInUser"));
   if (user.id === loggedInUser?.id) {
-    alert("Du kannst dich nicht selbst löschen!");
+    alert("Du kannst dich nicht selbst archivieren!");
     return;
   }
-  if (confirm(`Möchtest du ${user.vorname} ${user.nachname} wirklich löschen?`)) {
-    deleteUser(user.id);
-    deleteWorkTimesByUser(user.id);
+
+  if (confirm(`Möchtest du ${user.vorname} ${user.nachname} wirklich archivieren?`)) {
+    updateUser(user.id, { ...user, isArchived: true });
     userList.value = [...users];
   }
 }
+
+function restoreUser(user) {
+  updateUser(user.id, { ...user, isArchived: false });
+  userList.value = [...users];
+}
+
 function editUserFromStorage(user) {
+  if (user.isArchived) {
+    alert("Archivierte Nutzer können nicht bearbeitet werden.");
+    return;
+  }
+
   form.value = {
     nachname: user.nachname,
     vorname: user.vorname,
@@ -93,9 +93,11 @@ function editUserFromStorage(user) {
     isHR: user.isHR,
     arbeitszeitTyp: user.arbeitszeitTyp || "Vollzeit",
   };
+
   editingUser.value = user;
   showForm.value = true;
 }
+
 function resetForm() {
   form.value = {
     nachname: "",
@@ -109,6 +111,7 @@ function resetForm() {
 }
 </script>
 
+
 <template>
   <div>
     <header>
@@ -117,9 +120,11 @@ function resetForm() {
     </header>
 
     <div class="dashboard-container">
+
+      <!-- Aktive Mitarbeiter -->
       <div class="card employee-list">
         <div class="section-title">
-          <span>Mitarbeiterliste</span>
+          <span>Aktive Mitarbeiter</span>
           <button class="add-btn" @click="toggleForm">{{ showForm ? "×" : "+" }}</button>
         </div>
 
@@ -128,14 +133,14 @@ function resetForm() {
             <tr>
               <th>Name</th>
               <th>Vorname</th>
-              <th>E-mail</th>
+              <th>E-Mail</th>
               <th>Arbeitszeit</th>
               <th>HR</th>
-              <th></th>
+              <th>Aktionen</th>
             </tr>
           </thead>
           <tbody>
-            <tr v-for="user in userList" :key="user.id">
+            <tr v-for="user in activeUsers" :key="user.id">
               <td>{{ user.nachname }}</td>
               <td>{{ user.vorname }}</td>
               <td>{{ user.email }}</td>
@@ -145,8 +150,8 @@ function resetForm() {
                 <button @click="editUserFromStorage(user)">
                   <img src="/public/edit.png" alt="Edit" />
                 </button>
-                <button @click="deleteUserFromStorage(user)">
-                  <img src="/public/delete.png" alt="Delete" />
+                <button @click="archiveUser(user)">
+                  <img src="/public/delete.png" alt="Archivieren" />
                 </button>
               </td>
             </tr>
@@ -154,14 +159,44 @@ function resetForm() {
         </table>
       </div>
 
+      <!-- Platzhalter: Zeiterfassung -->
       <div class="card" style="flex: 2">
         <div class="section-title">Zeiterfassung</div>
       </div>
 
+      <!-- Platzhalter: Auswertung -->
       <div class="card" style="width: 100%">
         <div class="section-title">Auswertung</div>
       </div>
-    
+    </div>
+
+    <!-- Archivierte Mitarbeiter -->
+    <div class="card employee-list archived-list">
+        <div class="section-title">
+          <span>Archivierte Mitarbeiter</span>
+        </div>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Vorname</th>
+              <th>E-Mail</th>
+              <th>Arbeitszeit</th>
+              <th>HR</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="user in archivedUsers" :key="user.id">
+              <td>{{ user.nachname }}</td>
+              <td>{{ user.vorname }}</td>
+              <td>{{ user.email }}</td>
+              <td>{{ user.arbeitszeitTyp }}</td>
+              <td>{{ user.isHR ? "Ja" : "Nein" }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
 
     <!-- FORMULAR-OVERLAY -->
     <div class="overlay" v-if="showForm">
@@ -177,6 +212,7 @@ function resetForm() {
           <input type="checkbox" v-model="form.isHR" />
           Gehört zur HR-Abteilung
         </label>
+
         <label class="checkbox">
           Arbeitszeit:
           <select v-model="form.arbeitszeitTyp">
@@ -184,13 +220,13 @@ function resetForm() {
             <option value="Teilzeit">Teilzeit</option>
           </select>
         </label>
+
         <div class="form-buttons right">
           <button @click="submitForm">{{ editingUser ? "Speichern" : "Hinzufügen" }}</button>
         </div>
       </div>
     </div>
   </div>
-</div>
 </template>
 
 <style scoped>
@@ -236,11 +272,14 @@ header h1 {
   border-radius: 1rem;
   padding: 1rem;
   flex: 1;
-  
 }
 
 .employee-list {
   flex: 0 1 400px;
+}
+.archived-list {
+  margin-left: 30px;
+  width: 570px;
 }
 
 table {

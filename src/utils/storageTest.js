@@ -6,7 +6,8 @@ const users = [
     email: 'anna.mueller@example.com',
     passwort: 'Passwort123',
     isHR: false,
-    arbeitszeitTyp: 'Vollzeit'
+    arbeitszeitTyp: 'Vollzeit',
+    isArchived: false
   },
   {
     id: 2,
@@ -15,7 +16,8 @@ const users = [
     email: 'tom.schmidt@example.com',
     passwort: 'Geheim456', 
     isHR: true,
-    arbeitszeitTyp: 'Teilzeit'
+    arbeitszeitTyp: 'Teilzeit',
+    isArchived: false
   }
 ]
 const storedUsers = localStorage.getItem('users');
@@ -25,7 +27,7 @@ if (storedUsers) {
 }
 let nextId = users.length + 1
 
-function addUser(nachname, vorname, email, passwort, isHR  = false, arbeitszeitTyp = 'Vollzeit') {
+function addUser(nachname, vorname, email, passwort, isHR  = false, arbeitszeitTyp = 'Vollzeit', isArchived = false) {
   users.push({
     id: nextId++,
     nachname,
@@ -33,7 +35,8 @@ function addUser(nachname, vorname, email, passwort, isHR  = false, arbeitszeitT
     email,
     passwort, 
     isHR,
-    arbeitszeitTyp
+    arbeitszeitTyp,
+    isArchived
   })
   localStorage.setItem('users', JSON.stringify(users))
 }
@@ -54,4 +57,12 @@ function updateUser(id, updatedData) {
   }
 }
 
-export { users, addUser, deleteUser,  updateUser }
+function archiveUser(id) {
+  const index = users.findIndex(user => user.id === id);
+  if (index !== -1) {
+    users[index].isArchived = true;
+    localStorage.setItem('users', JSON.stringify(users));
+  }
+}
+
+export { users, addUser, deleteUser,  updateUser, archiveUser }

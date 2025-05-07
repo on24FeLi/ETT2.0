@@ -161,14 +161,16 @@ onMounted(() => {
 }
 
 .calendar {
-  margin: 2rem auto;
-  width: 100%;
-  max-width: 500px;
+  width: 500px;         /* Feste Breite, kein % */
+  min-width: 320px;     /* Schutz gegen Schrumpfen */
+  max-width: 500px;     /* Optional: kein Wachsen */
+  flex-shrink: 0;       /* Damit Flexbox es nicht verkleinert */
   background: white;
   border-radius: 12px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   padding: 1rem;
 }
+
 
 .calendar-header {
   display: flex;

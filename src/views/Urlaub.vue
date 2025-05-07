@@ -13,6 +13,7 @@ onMounted(() => {
   }
 });
 console.log(urlaubsliste)
+
 // Platzhalter-Komponente für Storno-/Verschiebe-Buttons
 const PlatzhalterAktion = {
   template: '<div><button class="aktion-btn">⚙️</button></div>'
@@ -24,11 +25,26 @@ const PlatzhalterAktion = {
     <header>
       <h1>Urlaub</h1>
       <navigation/>
-
     </header>
+    <!-- Flex-Container -->
+    <div class="urlaub-container">
+      <form class="urlaub-formular" action="/submit-urlaub" method="post">
+        <label for="startdatum">Urlaubsbeginn</label>
+        <input type="date" id="startdatum" name="startdatum" required>
 
-    <!-- Kalenderansicht -->
-    <CleanKalenderansicht/>
+        <label for="enddatum">Urlaubsende</label>
+        <input type="date" id="enddatum" name="enddatum" required>
+
+        <label for="nachricht">Kommentar (optional)</label>
+        <textarea id="nachricht" name="nachricht" rows="4"></textarea>
+
+        <button type="submit">Antrag senden</button>
+      </form>
+      <!-- Kalender -->
+      <div class="calendar-wrapper">
+        <CleanKalenderansicht />
+      </div>
+    </div>
 
     <!-- Urlaubsliste -->
     <div class="urlaubsliste-container">
@@ -54,13 +70,10 @@ const PlatzhalterAktion = {
       <p v-else>Keine Urlaube geplant.</p>
     </div>
   </div>
-     
-  
-
-
 </template>
 
 <style scoped>
+/* ========== HEADER ========== */
 header {
   background-color: #f1ecdb;
   display: flex;
@@ -73,9 +86,69 @@ header {
 header h1 {
   font-size: 2rem;
   padding: 0.2rem 1rem;
-  display: inline-block;
 }
 
+/* / ========== CONTAINER ========== / */
+.urlaub-container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 3rem;
+  max-width: 1000px;
+  margin: 2rem auto;
+  padding: 2rem;
+   flex-wrap: nowrap;
+}
+
+/* / ========== FORMULAR ========== / */
+.urlaub-formular {
+  background-color: #ffffff;
+  padding: 20px;
+  border-radius: 10px;
+  width: 300px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.urlaub-formular label {
+  display: block;
+  margin-top: 10px;
+  font-weight: bold;
+}
+
+.urlaub-formular input,
+.urlaub-formular textarea,
+.urlaub-formular select {
+  width: 100%;
+  padding: 8px;
+  margin-top: 5px;
+  box-sizing: border-box;
+}
+
+.urlaub-formular button {
+  margin-top: 15px;
+  padding: 10px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.urlaub-formular button:hover {
+  background-color: #0056b3;
+}
+
+/* / ========== KALENDER ========== */ 
+.calendar-wrapper {
+  width: 320px;
+  flex-shrink: 0;
+  flex-grow: 0;
+  display: flex;
+  justify-content: center;
+} 
+
+
+/* Urlaubsliste Container */
 .urlaubsliste-container {
   max-width: 900px;
   margin: 3rem auto;
@@ -115,14 +188,6 @@ header h1 {
 .urlaubsliste tr:hover {
   background-color: #f0f0f0;
 }
-
-.aktion-btn {
-  padding: 0.5rem 1rem;
-  background-color: #dedede;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-}
 form {
       background-color: white;
       padding: 20px;
@@ -153,24 +218,4 @@ form {
     button:hover {
       background-color: #0056b3;
     }
-    .urlaub-container {
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  gap: 3rem; /* Abstand zwischen Formular und Kalender */
-  padding: 2rem;
-}
-
-.urlaub-formular {
-  background-color: white;
-  padding: 20px;
-  border-radius: 10px;
-  width: 300px; /* Fixe Breite, damit es nicht zu breit wird */
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
-
-.calendar-wrapper {
-  flex-shrink: 0; /* Verhindert, dass sich der Kalender beim Platzmangel verkleinert */
-}
-
 </style>

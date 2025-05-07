@@ -6,6 +6,7 @@
     <!-- Kalender Popup -->
     <div v-if="isCalendarOpen" class="modal-overlay" @click.self="isCalendarOpen = false">
       <div class="calendar-modal">
+        <button class="close-button" @click="isCalendarOpen = false">×</button>
         <div class="calendar-header">
           <img src="/rechter-pfeil.png" @click="prevMonth" class="arrow left-arrow" />
           <h2>{{ currentMonthYear }}</h2>
@@ -33,6 +34,7 @@
     <!-- Uhrzeit-Eingabe Popup -->
     <div v-if="isTimeFormOpen" class="modal-overlay" @click.self="isTimeFormOpen = false">
       <div class="time-form-modal">
+        <button class="close-button" @click="isTimeFormOpen = false">×</button>
         <h3>Arbeitszeit am {{ selectedDateString }}</h3>
 
         <div class="time-input-group">
@@ -62,6 +64,7 @@
 <script setup>
 import { ref, computed } from 'vue';
 import { addOrUpdateWorkTime } from '@/utils/Arbeitszeiten';
+
 const user = JSON.parse(localStorage.getItem('loggedInUser'));
 const userId = user?.id ?? null;
 
@@ -147,6 +150,7 @@ const selectedDateString = computed(() =>
       })
     : ''
 );
+
 const emit = defineEmits(['workTimeSaved']);
 const saveTime = () => {
   if (!selectedDate.value || !startTime.value || !stopTime.value || !workedTime.value) {
@@ -159,18 +163,16 @@ const saveTime = () => {
     return;
   }
 
-  const formattedDate = selectedDate.value.toISOString().split('T')[0]; // z.B. "2025-05-05"
+  const formattedDate = selectedDate.value.toISOString().split('T')[0];
   addOrUpdateWorkTime(userId, formattedDate, workedTime.value, startTime.value, stopTime.value);
 
   console.log(`Gespeichert für ${formattedDate}`);
   isTimeFormOpen.value = false;
 
-  // Felder zurücksetzen (optional)
   startTime.value = '';
   stopTime.value = '';
   workedTime.value = '';
   emit('workTimeSaved');
-  
 };
 </script>
 
@@ -211,6 +213,23 @@ const saveTime = () => {
   width: 90%;
   max-width: 500px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  position: relative;
+}
+
+.close-button {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  font-weight: bold;
+  cursor: pointer;
+  color: #888;
+}
+
+.close-button:hover {
+  color: #333;
 }
 
 .calendar-header {

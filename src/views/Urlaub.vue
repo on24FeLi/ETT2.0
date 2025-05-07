@@ -2,8 +2,17 @@
 import { ref, computed, onMounted } from "vue";
 import navigation from '@/components/navigation.vue';
 import CleanKalenderansicht from '@/components/CleanKalenderansicht.vue';
-import {urlaube} from '@/utils/Urlaubszeiten';
+import {getUrlaubeByUser} from '@/utils/Urlaubszeiten';
+const user = JSON.parse(localStorage.getItem('loggedInUser'));
+const userId = user?.id ?? null;
+const urlaubsliste = ref([]);
 
+onMounted(() => {
+  if (user && user.id) {
+    urlaubsliste.value = getUrlaubeByUser(user.id);
+  }
+});
+console.log(urlaubsliste)
 // Platzhalter-Komponente für Storno-/Verschiebe-Buttons
 const PlatzhalterAktion = {
   template: '<div><button class="aktion-btn">⚙️</button></div>'
@@ -23,7 +32,7 @@ const PlatzhalterAktion = {
     <!-- Urlaubsliste -->
     <div class="urlaubsliste-container">
       <h2>Geplante Urlaube</h2>
-      <table v-if="urlaube.length" class="urlaubsliste">
+      <table v-if="urlaubsliste.length" class="urlaubsliste">
         <thead>
           <tr>
             <th>Startdatum</th>
@@ -33,7 +42,7 @@ const PlatzhalterAktion = {
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(urlaub, index) in urlaube" :key="index">
+          <tr v-for="(urlaub, index) in urlaubsliste" :key="index">
             <td>{{ new Date(urlaub.start).toLocaleDateString("de-DE") }}</td>
             <td>{{ new Date(urlaub.end).toLocaleDateString("de-DE") }}</td>
             <td>{{ urlaub.tage }}</td>

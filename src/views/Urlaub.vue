@@ -24,6 +24,7 @@ const PlatzhalterAktion = {
     <header>
       <h1>Urlaub</h1>
       <navigation/>
+<<<<<<< HEAD
     </header>
 
     <!-- Kalenderansicht -->
@@ -53,6 +54,11 @@ const PlatzhalterAktion = {
       <p v-else>Keine Urlaube geplant.</p>
     </div>
   </div>
+=======
+      </header>
+     </div>
+<CleanKalenderansicht/>
+>>>>>>> 15d96f9ccff3ca863d1972657ce7c9d700fa8b29
 </template>
 
 <style scoped>
@@ -118,4 +124,54 @@ header h1 {
   border-radius: 6px;
   cursor: pointer;
 }
+form {
+      background-color: white;
+      padding: 20px;
+      border-radius: 10px;
+      max-width: 400px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    label {
+      display: block;
+      margin-top: 10px;
+      font-weight: bold;
+    }
+    input, textarea, select {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+      box-sizing: border-box;
+    }
+    button {
+      margin-top: 15px;
+      padding: 10px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    .urlaub-container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 3rem; /* Abstand zwischen Formular und Kalender */
+  padding: 2rem;
+}
+
+.urlaub-formular {
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  width: 300px; /* Fixe Breite, damit es nicht zu breit wird */
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.calendar-wrapper {
+  flex-shrink: 0; /* Verhindert, dass sich der Kalender beim Platzmangel verkleinert */
+}
+
 </style>

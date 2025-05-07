@@ -309,4 +309,29 @@ header h1 {
   background-color: #90AC8F;
   transition: width 0.3s ease-in-out;
 }
+table, th, td {
+  border: 1px solid black;
+  border-collapse: collapse;
+}
+
+th, td {
+  padding: 8px;
+  text-align: center;
+}
+
+.arbeitszeiten-tabelle{
+  width: 100%;
+  border: 1px solid black;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+.arbeitszeiten-tabelle th,
+.arbeitszeiten-tabelle td {
+  border: 1px solid black;
+  padding: 8px;
+  text-align: center;
+}
+.arbeitszeiten-tabelle thead tr {
+    background-color: #f3e9d2; 
+  }
   </style>

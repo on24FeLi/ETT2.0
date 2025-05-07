@@ -1,13 +1,13 @@
 <script setup>
 import { ref, computed } from "vue";
-
+import DayEditor from '@/components/DayEditor.vue';
 import { getWorkTimesByUser } from "@/utils/Arbeitszeiten";
 
 // Eingeloggten Benutzer laden
 const user = JSON.parse(localStorage.getItem("loggedInUser"));
 const userId = user?.id ?? null;
 const arbeitszeitTyp = user?.arbeitszeitTyp ?? "Vollzeit";
-
+const forceUpdate = ref(0);
 // Hilfsfunktion: Uhrzeit aus Datum entfernen (nur Datum vergleichen)
 function toDateOnly(date) {
   const d = new Date(date);
@@ -37,6 +37,7 @@ const monthRange = computed(() => {
 
 // Gefilterte Arbeitszeiten für aktuellen Monat
 const workTimes = computed(() => {
+  forceUpdate.value;
   if (!userId) return [];
   const allTimes = getWorkTimesByUser(userId);
   return allTimes.filter((entry) => {
@@ -60,6 +61,7 @@ function getWeekdayAbbreviation(dateString) {
 }
 // Monatliche Gesamtstunden
 const totalWorkingHours = computed(() => {
+  forceUpdate.value;
   return workTimes.value.reduce((sum, entry) => sum + parseFloat(entry.workinghours), 0);
 });
 
@@ -93,6 +95,10 @@ const monthlyOvertime = computed(() => {
 const monthlyRemaining = computed(() => {
   return Math.max(0, monthlyTarget.value - totalWorkingHours.value);
 });
+const reloadWorkTimes = () => {
+  console.log("🔄 Monatsansicht aktualisiert");
+  forceUpdate.value++;
+};
 </script>
 <template>
   <navigation></navigation>
@@ -124,7 +130,8 @@ const monthlyRemaining = computed(() => {
             <th>Beginn</th>
             <th>Ende</th>
             <th>Arbeitszeit</th>
-            <th>Überstunden / Minusstunden</th>
+   
+    <th>Überstunden / Minusstunden   <DayEditor :userId="userId" :arbeitszeitTyp="arbeitszeitTyp" @workTimeSaved="reloadWorkTimes" /> </th>
           </tr>
         </thead>
         <tbody>

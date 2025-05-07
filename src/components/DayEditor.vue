@@ -1,3 +1,4 @@
+
 <template>
   <div class="day-editor">
     <button @click="isCalendarOpen = true" class="open-button">Arbeitszeiten bearbeiten</button>
@@ -60,6 +61,9 @@
 
 <script setup>
 import { ref, computed } from 'vue';
+import { addOrUpdateWorkTime } from '@/utils/Arbeitszeiten';
+const user = JSON.parse(localStorage.getItem('loggedInUser'));
+const userId = user?.id ?? null;
 
 const isCalendarOpen = ref(false);
 const isTimeFormOpen = ref(false);
@@ -109,7 +113,26 @@ const nextMonth = () => {
 };
 
 const openTimeForm = (day) => {
-  selectedDate.value = new Date(currentYear.value, currentMonth.value, day);
+  const date = new Date(currentYear.value, currentMonth.value, day);
+  date.setHours(12, 0, 0, 0);
+  selectedDate.value = date;
+
+  const formattedDate = date.toISOString().split('T')[0];
+  const allEntries = JSON.parse(localStorage.getItem('workTimes')) || [];
+  const entry = allEntries.find(
+    (e) => e.userId === userId && e.date === formattedDate
+  );
+
+  if (entry) {
+    startTime.value = entry.start;
+    stopTime.value = entry.end;
+    workedTime.value = entry.workinghours;
+  } else {
+    startTime.value = '';
+    stopTime.value = '';
+    workedTime.value = '';
+  }
+
   isTimeFormOpen.value = true;
   isCalendarOpen.value = false;
 };
@@ -124,11 +147,30 @@ const selectedDateString = computed(() =>
       })
     : ''
 );
-
+const emit = defineEmits(['workTimeSaved']);
 const saveTime = () => {
-  console.log('Gespeichert für:', selectedDateString.value);
-  console.log('Start:', startTime.value, 'Stop:', stopTime.value, 'Gearbeitet:', workedTime.value);
+  if (!selectedDate.value || !startTime.value || !stopTime.value || !workedTime.value) {
+    alert("Bitte alle Felder ausfüllen.");
+    return;
+  }
+
+  if (!userId) {
+    alert("Kein eingeloggter Benutzer gefunden.");
+    return;
+  }
+
+  const formattedDate = selectedDate.value.toISOString().split('T')[0]; // z.B. "2025-05-05"
+  addOrUpdateWorkTime(userId, formattedDate, workedTime.value, startTime.value, stopTime.value);
+
+  console.log(`Gespeichert für ${formattedDate}`);
   isTimeFormOpen.value = false;
+
+  // Felder zurücksetzen (optional)
+  startTime.value = '';
+  stopTime.value = '';
+  workedTime.value = '';
+  emit('workTimeSaved');
+  
 };
 </script>
 

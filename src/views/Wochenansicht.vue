@@ -42,6 +42,7 @@ const weekRange = computed(() => {
 
 // Gefilterte Arbeitszeiten für aktuelle Woche
 const workTimes = computed(() => {
+  forceUpdate.value; // Trigger für Neuberechnung
   if (!userId) return [];
   const allTimes = getWorkTimesByUser(userId);
   return allTimes.filter(entry => {
@@ -49,6 +50,15 @@ const workTimes = computed(() => {
     const start = toDateOnly(weekRange.value.start);
     const end = toDateOnly(weekRange.value.end);
     return entryDate >= start && entryDate <= end;
+  });
+});
+const sortedWorkTimes = computed(() => {
+  const weekdayOrder = { 'Mo': 1, 'Di': 2, 'Mi': 3, 'Do': 4, 'Fr': 5, 'Sa': 6, 'So': 7 };
+
+  return [...workTimes.value].sort((a, b) => {
+    const aDay = getWeekdayAbbreviation(a.date);
+    const bDay = getWeekdayAbbreviation(b.date);
+    return weekdayOrder[aDay] - weekdayOrder[bDay];
   });
 });
 const sollStunden = computed(() => {
@@ -80,6 +90,16 @@ const progressPercent = computed(() => {
 const remainingHours = computed(() => {
   return Math.max(0, weeklyTarget.value - totalWorkingHours.value);
 });
+
+
+//HINZUFÜGEN BUTTON
+const forceUpdate = ref(0); // Trigger für Neuberechnung
+
+
+const reloadWorkTimes = () => {
+  console.log("🔁 reloadWorkTimes triggered");
+  forceUpdate.value++;
+};
 </script>
 
 <template>
@@ -124,7 +144,7 @@ const remainingHours = computed(() => {
             </tr>
           </thead>
           <tbody>
-            <tr v-for="(entry, index) in workTimes" :key="index">
+            <tr v-for="(entry, index) in sortedWorkTimes" :key="index">
               <td>{{ getWeekdayAbbreviation(entry.date) }}</td>
               <td>{{ new Date(entry.date).toLocaleDateString('de-DE') }}</td>
               <td>{{ entry.start }}</td>
@@ -136,7 +156,7 @@ const remainingHours = computed(() => {
         </table>
   
         <p v-else>Keine Einträge für diese Woche.</p>
-        <DayEditor :userId="userId" :arbeitszeitTyp="arbeitszeitTyp" />
+        <DayEditor :userId="userId" :arbeitszeitTyp="arbeitszeitTyp" @workTimeSaved="reloadWorkTimes" />
       </div>
     </div>
   </template>

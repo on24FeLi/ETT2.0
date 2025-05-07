@@ -1,10 +1,11 @@
 <script setup>
 import { ref, onMounted, computed } from "vue";
 import { getWorkTimesByUser } from "@/utils/Arbeitszeiten";
-
+import DayEditor from '@/components/DayEditor.vue';
 const user = JSON.parse(localStorage.getItem("loggedInUser"));
 const userId = user?.id ?? null;
 const arbeitszeitTyp = user?.arbeitszeitTyp ?? "Vollzeit";
+const forceUpdate = ref(0);
 // Aktuelles Datum
 const date = ref(new Date());
 const days = ref([]);
@@ -81,7 +82,7 @@ function getDayClass(day) {
 
   const allUserEntries = getWorkTimesByUser(userId);
   const entry = allUserEntries.find((entry) => entry.date === fullDate);
-
+  forceUpdate.value;
   if (entry) {
     // Dynamische Sollstunden je nach Arbeitszeittyp
     const sollStunden = arbeitszeitTyp === "Teilzeit" ? 6 : 8;
@@ -96,11 +97,13 @@ function getDayClass(day) {
   }
 }
 function calculateDifference(workinghours) {
+  forceUpdate.value;
   const sollStunden = arbeitszeitTyp === "Teilzeit" ? 6 : 8;
   return (parseFloat(workinghours) - sollStunden).toFixed(2);
 }
 const totalWorkingHours = computed(() => {
   const all = getWorkTimesByUser(userId);
+  forceUpdate.value;
   const currentMonth = date.value.getMonth();
   const currentYear = date.value.getFullYear();
 
@@ -113,6 +116,7 @@ const totalWorkingHours = computed(() => {
 });
 
 const workingDaysInMonth = computed(() => {
+  forceUpdate.value;
   let workdays = 0;
   const year = date.value.getFullYear();
   const month = date.value.getMonth();
@@ -126,21 +130,33 @@ const workingDaysInMonth = computed(() => {
 });
 
 const monthlyTarget = computed(() => {
+  forceUpdate.value;
   const hoursPerDay = arbeitszeitTyp === "Teilzeit" ? 6 : 8;
   return workingDaysInMonth.value * hoursPerDay;
 });
 
 const progressPercent = computed(() => {
+  forceUpdate.value;
   return Math.min(100, (totalWorkingHours.value / monthlyTarget.value) * 100);
 });
 
 const monthlyOvertime = computed(() => {
+  forceUpdate.value;
   return Math.max(0, totalWorkingHours.value - monthlyTarget.value);
 });
 
 const monthlyRemaining = computed(() => {
+  forceUpdate.value;
   return Math.max(0, monthlyTarget.value - totalWorkingHours.value);
 });
+const reloadWorkTimes = () => {
+  console.log("🔄 Kalender: reloadWorkTimes triggered");
+  forceUpdate.value++; 
+  if (selectedDate.value) {
+    const selected = new Date(selectedDate.value);
+    selectDate(selected.getDate());
+  }
+};
 </script>
 
 <template>
@@ -207,6 +223,7 @@ const monthlyRemaining = computed(() => {
 
       <p v-else>Keine Zeiteinträge für diesen Tag.</p>
     </div>
+    <DayEditor :userId="userId" :arbeitszeitTyp="arbeitszeitTyp" @workTimeSaved="reloadWorkTimes" />
   </div>
 </template>
 

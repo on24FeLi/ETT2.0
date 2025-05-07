@@ -6,6 +6,9 @@ import {addUrlaub, deleteUrlaub, getUrlaubeByUser } from '@/utils/Urlaubszeiten'
 const user = JSON.parse(localStorage.getItem('loggedInUser'));
 const userId = user?.id ?? null;
 const urlaubsliste = ref([]);
+const startdatum = ref("");
+const enddatum = ref("");
+const kommentar = ref("");
 
 onMounted(() => {
   if (user && user.id) {
@@ -13,7 +16,23 @@ onMounted(() => {
   }
 });
 console.log(urlaubsliste)
+//Urlaub hinzufügen 
+function handleSubmit() {
+  if (!userId) {
+    console.warn("Kein Nutzer angemeldet.");
+    return;
+  }
 
+  if (startdatum.value && enddatum.value) {
+    addUrlaub(userId, startdatum.value, enddatum.value);
+    urlaubsliste.value = getUrlaubeByUser(userId); // Liste aktualisieren
+    startdatum.value = "";
+    enddatum.value = "";
+    kommentar.value = "";
+  } else {
+    console.warn("Start- und Enddatum müssen ausgefüllt sein.");
+  }
+}
 // Platzhalter-Komponente für Storno-/Verschiebe-Buttons
 const PlatzhalterAktion = {
   template: '<div><button class="aktion-btn">⚙️</button></div>'
@@ -28,15 +47,15 @@ const PlatzhalterAktion = {
     </header>
     <!-- Flex-Container -->
     <div class="urlaub-container">
-      <form class="urlaub-formular" action="/submit-urlaub" method="post">
+      <form class="urlaub-formular"  @submit.prevent="handleSubmit">
         <label for="startdatum">Urlaubsbeginn</label>
-        <input type="date" id="startdatum" name="startdatum" required>
+        <input type="date" id="startdatum" name="startdatum" v-model="startdatum"  required>
 
         <label for="enddatum">Urlaubsende</label>
-        <input type="date" id="enddatum" name="enddatum" required>
+        <input type="date" id="enddatum" name="enddatum"  v-model="enddatum" required>
 
         <label for="nachricht">Kommentar (optional)</label>
-        <textarea id="nachricht" name="nachricht" rows="4"></textarea>
+        <textarea id="nachricht" name="nachricht"  v-model="kommentar" rows="4"></textarea>
 
         <button type="submit">Antrag senden</button>
       </form>

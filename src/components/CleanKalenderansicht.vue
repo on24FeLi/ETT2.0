@@ -1,7 +1,12 @@
 <script setup>
 import { ref, onMounted, computed } from "vue";
 import { getWorkTimesByUser } from "@/utils/Arbeitszeiten";
-
+const props = defineProps({
+  urlaubsliste: {
+    type: Array,
+    default: () => []
+  }
+});
 // Benutzerinfo
 const user = JSON.parse(localStorage.getItem("loggedInUser"));
 const userId = user?.id ?? null;
@@ -61,7 +66,7 @@ function selectDate(day) {
 // Tag-Klasse (neutral, keine Farben)
 function getDayClass(day) {
   if (!day) return "empty";
-  return "";
+  return isUrlaubstag(day) ? "urlaubstag" : "";
 }
 
 // Differenz berechnen
@@ -74,6 +79,19 @@ function calculateDifference(workinghours) {
 onMounted(() => {
   renderCalendar();
 });
+function isUrlaubstag(day) {
+  if (!day) return false;
+
+  const currentYear = date.value.getFullYear();
+  const currentMonth = String(date.value.getMonth() + 1).padStart(2, "0");
+  const currentDay = String(day).padStart(2, "0");
+
+  const fullDate = `${currentYear}-${currentMonth}-${currentDay}`;
+
+  return props.urlaubsliste.some(u => {
+    return fullDate >= u.start && fullDate <= u.end;
+  });
+}
 </script>
 <template>
   <div class="calendar">
@@ -133,6 +151,9 @@ onMounted(() => {
   </div>
 </template>
 <style scoped>
+.urlaubstag {
+  border: 3px solid #5C6E91;
+}
 .arbeitszeiten-tabelle {
   width: 100%;
   border-collapse: collapse;

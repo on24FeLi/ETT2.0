@@ -61,7 +61,7 @@ const PlatzhalterAktion = {
       </form>
       <!-- Kalender -->
       <div class="calendar-wrapper">
-        <CleanKalenderansicht />
+        <CleanKalenderansicht :urlaubsliste="urlaubsliste" />
       </div>
     </div>
 

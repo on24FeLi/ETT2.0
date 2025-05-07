@@ -1,37 +1,27 @@
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, onMounted } from "vue";
 import navigation from '@/components/navigation.vue';
-import CleanKalenderansicht from '@/components/CleanKalenderansicht.vue'
+import CleanKalenderansicht from '@/components/CleanKalenderansicht.vue';
+import {urlaube} from '@/utils/Urlaubszeiten';
+
+// Platzhalter-Komponente für Storno-/Verschiebe-Buttons
+const PlatzhalterAktion = {
+  template: '<div><button class="aktion-btn">⚙️</button></div>'
+};
 </script>
+
 <template>
-     <div>
-      <header>
+  <div>
+    <header>
       <h1>Urlaub</h1>
       <navigation/>
       </header>
-    <!-- Flex-Container -->
-    <div class="urlaub-container">
-      <form class="urlaub-formular" action="/submit-urlaub" method="post">
-        <label for="startdatum">Urlaubsbeginn</label>
-        <input type="date" id="startdatum" name="startdatum" required>
-
-        <label for="enddatum">Urlaubsende</label>
-        <input type="date" id="enddatum" name="enddatum" required>
-
-        <label for="nachricht">Kommentar (optional)</label>
-        <textarea id="nachricht" name="nachricht" rows="4"></textarea>
-
-        <button type="submit">Antrag senden</button>
-      </form>
-      <!-- Kalender -->
-      <div class="calendar-wrapper">
-        <CleanKalenderansicht />
-      </div>
-    </div>
-    </div>
+     </div>
+<CleanKalenderansicht/>
 </template>
+
 <style scoped>
-    header {
+header {
   background-color: #f1ecdb;
   display: flex;
   justify-content: space-between;
@@ -46,12 +36,52 @@ header h1 {
   display: inline-block;
 }
 
-.logo {
-  font-family: monospace;
-  font-size: 2rem;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
+.urlaubsliste-container {
+  max-width: 900px;
+  margin: 3rem auto;
+  padding: 2rem;
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+.urlaubsliste-container h2 {
+  font-size: 1.5rem;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.urlaubsliste {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: center;
+}
+
+.urlaubsliste th,
+.urlaubsliste td {
+  padding: 1rem;
+  border-bottom: 1px solid #eee;
+}
+
+.urlaubsliste th {
+  background-color: #f3e9d2;
+  font-weight: bold;
+}
+
+.urlaubsliste tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.urlaubsliste tr:hover {
+  background-color: #f0f0f0;
+}
+
+.aktion-btn {
+  padding: 0.5rem 1rem;
+  background-color: #dedede;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
 }
 form {
       background-color: white;

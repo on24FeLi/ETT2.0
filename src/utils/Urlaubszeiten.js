@@ -1,17 +1,14 @@
-const urlaube = JSON.parse(localStorage.getItem("urlaube")) || [];
-if (urlaube.length === 0) {
-  addUrlaub(1, "2025-05-10", "2025-05-14");
-  addUrlaub(2, "2025-06-01", "2025-06-03");
-}
 function saveUrlaube(urlaube) {
   localStorage.setItem("urlaube", JSON.stringify(urlaube));
 }
+
 function calculateTage(start, end) {
   const startDate = new Date(start);
   const endDate = new Date(end);
   const diffInMs = endDate - startDate;
   return Math.floor(diffInMs / (1000 * 60 * 60 * 24)) + 1;
 }
+
 function addUrlaub(userId, start, end, kommentar) {
   const stored = JSON.parse(localStorage.getItem("urlaube")) || [];
   const exists = stored.some(
@@ -20,8 +17,9 @@ function addUrlaub(userId, start, end, kommentar) {
 
   if (exists) {
     console.warn("Urlaub für diesen Zeitraum existiert bereits.");
-    return; // Kein Eintrag hinzufügen
+    return;
   }
+
   const id = stored.length > 0 ? Math.max(...stored.map(u => u.id)) + 1 : 1;
   const tage = calculateTage(start, end);
 
@@ -30,16 +28,32 @@ function addUrlaub(userId, start, end, kommentar) {
     userId,
     start,
     end,
+
+
     tage, 
    kommentar: kommentar ?? ""
+
   });
 
   saveUrlaube(stored);
 }
 
 function deleteUrlaub(id) {
-  const filtered = urlaube.filter(u => u.id !== id);
+  const stored = JSON.parse(localStorage.getItem("urlaube")) || [];
+  const filtered = stored.filter(u => u.id !== id);
   saveUrlaube(filtered);
+}
+
+function updateUrlaub(id, start, end, kommentar) {
+  const stored = JSON.parse(localStorage.getItem("urlaube")) || [];
+  const index = stored.findIndex(u => u.id === id);
+
+  if (index !== -1) {
+    stored[index] = { ...stored[index], start, end, kommentar };
+    saveUrlaube(stored);
+  } else {
+    console.warn("Urlaub nicht gefunden.");
+  }
 }
 
 function getUrlaubeByUser(userId) {
@@ -48,5 +62,4 @@ function getUrlaubeByUser(userId) {
 }
 // ARBEITSZEITEN ERFASSUNG
 
-
-export { addUrlaub, deleteUrlaub, getUrlaubeByUser };
+export { addUrlaub, deleteUrlaub, updateUrlaub, getUrlaubeByUser };

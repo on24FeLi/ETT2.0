@@ -28,7 +28,11 @@ function handleSubmit() {
 
   if (startdatum.value && enddatum.value) {
     addUrlaub(userId, startdatum.value, enddatum.value, kommentar.value);
+<<<<<<< HEAD
     urlaubsliste.value = getUrlaubeByUser(userId);
+=======
+    urlaubsliste.value = getUrlaubeByUser(userId); // Liste aktualisieren
+>>>>>>> refs/remotes/origin/main
     startdatum.value = "";
     enddatum.value = "";
     kommentar.value = "";
@@ -68,7 +72,7 @@ function clearEdit() {
       </form>
 
       <div class="calendar-wrapper">
-        <CleanKalenderansicht />
+        <CleanKalenderansicht :urlaubsliste="urlaubsliste" />
       </div>
     </div>
 
@@ -80,6 +84,7 @@ function clearEdit() {
             <th>Startdatum</th>
             <th>Enddatum</th>
             <th>Urlaubstage</th>
+            <th>Kommentar</th>
             <th>Urlaub bearbeiten</th>
           </tr>
         </thead>
@@ -88,11 +93,14 @@ function clearEdit() {
             <td>{{ new Date(urlaub.start).toLocaleDateString("de-DE") }}</td>
             <td>{{ new Date(urlaub.end).toLocaleDateString("de-DE") }}</td>
             <td>{{ urlaub.tage }}</td>
+            <td>{{ urlaub.kommentar || "–" }}</td>
             <td>
               <button class="edit-btn" @click="handleEdit(urlaub)">
                 <img src="/edit.png" alt="Bearbeiten" />
               </button>
             </td>
+         
+
           </tr>
         </tbody>
       </table>

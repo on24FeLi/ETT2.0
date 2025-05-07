@@ -28,8 +28,11 @@ function addUrlaub(userId, start, end, kommentar) {
     userId,
     start,
     end,
-    tage,
-    kommentar
+
+
+    tage, 
+   kommentar: kommentar ?? ""
+
   });
 
   saveUrlaube(stored);

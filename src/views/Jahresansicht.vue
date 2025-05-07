@@ -30,10 +30,10 @@ function getDayClass(day, month) {
   const m = String(month + 1).padStart(2, '0');
   const d = String(day).padStart(2, '0');
   const fullDate = `${year.value}-${m}-${d}`;
-
+  const isUrlaubstag = urlaubDatesSet.has(fullDate);
   const allUserEntries = getWorkTimesByUser(userId);
   const entry = allUserEntries.find(e => e.date === fullDate);
-
+  if (isUrlaubstag) return 'urlaubstag';
   if (entry) {
     const sollStunden = arbeitszeitTyp === 'Teilzeit' ? 6 : 8;
     const gearbeitet = parseFloat(entry.workinghours);
@@ -110,6 +110,32 @@ const yearlyOvertime = computed(() => {
   return Math.max(0, totalHoursYear.value - yearlyTarget.value);
 });
 
+
+
+//URLAUB
+function getUrlaubDates(userId) {
+  const urlaube = JSON.parse(localStorage.getItem("urlaube")) || [];
+  const urlaubstage = new Set();
+
+  urlaube
+    .filter(u => u.userId === userId)
+    .forEach(({ start, end }) => {
+      const current = new Date(start);
+      const last = new Date(end);
+      while (current <= last) {
+        const day = current.getDay();
+        if (day !== 0 && day !== 6) {
+          urlaubstage.add(current.toISOString().split("T")[0]);
+        }
+        current.setDate(current.getDate() + 1);
+      }
+    });
+
+  return urlaubstage;
+}
+
+const urlaubDatesSet = getUrlaubDates(userId);
+
 </script>
 <template>
      <header>
@@ -184,6 +210,10 @@ const yearlyOvertime = computed(() => {
   </template>
   
   <style scoped>
+  .urlaubstag {
+    border: 2px solid #5C6E91 !important;
+  
+}
   header {
   background-color: #f1ecdb;
   display: flex;
@@ -235,17 +265,12 @@ header h1 {
     box-shadow: 0 2px 6px rgba(0,0,0,0.1);
   }
   .enough-worked {
-  background-color: #d4edda; /* sanftes Grün */
-  border: 1px solid #28a745;
-  color: #155724;
-  font-weight: bold;
+  /* sanftes Grün */
+  border: 2px solid #90AC8F !important;
 }
 
 .not-enough-worked {
-  background-color: #f8d7da; /* sanftes Rot */
-  border: 1px solid #dc3545;
-  color: #721c24;
-  font-weight: bold;
+  border: 2px solid #dc3545 !important;
 }
   .month h3 {
     text-align: center;

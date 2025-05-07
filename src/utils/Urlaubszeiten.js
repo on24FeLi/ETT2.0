@@ -46,6 +46,7 @@ function getUrlaubeByUser(userId) {
   const stored = JSON.parse(localStorage.getItem("urlaube")) || [];
   return stored.filter(u => u.userId === userId);
 }
+// ARBEITSZEITEN ERFASSUNG
 
 
 export { addUrlaub, deleteUrlaub, getUrlaubeByUser };

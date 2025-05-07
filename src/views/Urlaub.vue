@@ -94,12 +94,12 @@ header h1 {
   justify-content: center;
   align-items: flex-start;
   gap: 3rem;
-  max-width: 1000px;
+  width: 100%;
+  max-width: 1200px;
   margin: 2rem auto;
   padding: 2rem;
-   flex-wrap: nowrap;
+  flex-wrap: nowrap;
 }
-
 /* / ========== FORMULAR ========== / */
 .urlaub-formular {
   background-color: #ffffff;
@@ -107,6 +107,9 @@ header h1 {
   border-radius: 10px;
   width: 300px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  transform: translateX(-20px);
+  position: relative;
+  left: -80px;
 }
 
 .urlaub-formular label {
@@ -127,15 +130,15 @@ header h1 {
 .urlaub-formular button {
   margin-top: 15px;
   padding: 10px;
-  background-color: #007bff;
-  color: white;
+  background-color: #f1ecdb;
+  color: black;
   border: none;
   border-radius: 5px;
   cursor: pointer;
 }
 
 .urlaub-formular button:hover {
-  background-color: #0056b3;
+  background-color: lightgrey;
 }
 
 /* / ========== KALENDER ========== */ 

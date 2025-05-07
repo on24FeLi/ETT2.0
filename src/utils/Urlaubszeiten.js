@@ -12,7 +12,7 @@ function calculateTage(start, end) {
   const diffInMs = endDate - startDate;
   return Math.floor(diffInMs / (1000 * 60 * 60 * 24)) + 1;
 }
-function addUrlaub(userId, start, end) {
+function addUrlaub(userId, start, end, kommentar) {
   const stored = JSON.parse(localStorage.getItem("urlaube")) || [];
   const exists = stored.some(
     (u) => u.userId === userId && u.start === start && u.end === end
@@ -30,7 +30,8 @@ function addUrlaub(userId, start, end) {
     userId,
     start,
     end,
-    tage
+    tage, 
+    kommentar
   });
 
   saveUrlaube(stored);

@@ -83,18 +83,20 @@ function getDayClass(day) {
   const allUserEntries = getWorkTimesByUser(userId);
   const entry = allUserEntries.find((entry) => entry.date === fullDate);
   forceUpdate.value;
+  const classes = [];
+
+  if (urlaubDatesSet.has(fullDate)) {
+    classes.push("urlaubstag");
+  }
+
   if (entry) {
     // Dynamische Sollstunden je nach Arbeitszeittyp
     const sollStunden = arbeitszeitTyp === "Teilzeit" ? 6 : 8;
     const gearbeitet = parseFloat(entry.workinghours);
-    if (gearbeitet >= sollStunden) {
-      return "enough-worked";
-    } else {
-      return "not-enough-worked";
-    }
-  } else {
-    return ""; // normaler Tag ohne extra Farbe
+    classes.push(gearbeitet >= sollStunden ? "enough-worked" : "not-enough-worked");
+ // normaler Tag ohne extra Farbe
   }
+  return classes.join(" ");
 }
 function calculateDifference(workinghours) {
   forceUpdate.value;
@@ -157,6 +159,28 @@ const reloadWorkTimes = () => {
     selectDate(selected.getDate());
   }
 };
+function getUrlaubDates(userId) {
+  const urlaube = JSON.parse(localStorage.getItem("urlaube")) || [];
+  const urlaubstage = new Set();
+
+  urlaube
+    .filter(u => u.userId === userId)
+    .forEach(({ start, end }) => {
+      const current = new Date(start);
+      const last = new Date(end);
+      while (current <= last) {
+        const day = current.getDay();
+        if (day !== 0 && day !== 6) {
+          urlaubstage.add(current.toISOString().split("T")[0]);
+        }
+        current.setDate(current.getDate() + 1);
+      }
+    });
+
+  return urlaubstage;
+}
+
+const urlaubDatesSet = getUrlaubDates(userId);
 </script>
 
 <template>
@@ -256,17 +280,11 @@ const reloadWorkTimes = () => {
 }
 
 .enough-worked {
-  background-color: #d4edda; /* sanftes grün */
-  border: 2px solid #28a745; /* kräftiger grün Rand */
-  color: #155724;
-  font-weight: bold;
+  border: 2px solid #90AC8F; /* kräftiger grün Rand */
 }
 
 .not-enough-worked {
-  background-color: #f8d7da; /* sanftes rot */
   border: 2px solid #dc3545; /* kräftiger rot Rand */
-  color: #721c24;
-  font-weight: bold;
 }
 .arbeitszeiten-tabelle th,
 .arbeitszeiten-tabelle td {
@@ -397,4 +415,8 @@ header h1 {
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
+.urlaubstag {
+  border: 2px solid #5C6E91;
+}
+
 </style>

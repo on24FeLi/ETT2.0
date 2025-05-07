@@ -14,10 +14,47 @@ function addOrUpdateWorkTime(userId, date, workinghours, start, end) {
   localStorage.setItem("workTimes", JSON.stringify(updated));
 }
 function getWorkTimesByUser(userId) {
-  const all = JSON.parse(localStorage.getItem('workTimes')) || [];
-  return all.filter(entry => entry.userId === userId);
-}
+  const allTimes = JSON.parse(localStorage.getItem("workTimes")) || [];
+  const urlaubDates = expandUrlaubeToDates(userId);
 
+  const entriesForUser = allTimes.filter(t => t.userId === userId);
+
+  // Urlaubstage ergänzen, wenn kein Eintrag vorhanden ist
+  urlaubDates.forEach(date => {
+    const exists = entriesForUser.some(e => e.date === date);
+    if (!exists) {
+      entriesForUser.push({
+        userId,
+        date,
+        start: "Urlaub",
+        end: "Urlaub",
+        workinghours: 8
+      });
+    }
+  });
+
+  return entriesForUser;
+}
+function expandUrlaubeToDates(userId) {
+  const urlaube = JSON.parse(localStorage.getItem("urlaube")) || [];
+  const dates = [];
+
+  urlaube
+    .filter(u => u.userId === userId)
+    .forEach(({ start, end }) => {
+      const current = new Date(start);
+      const endDate = new Date(end);
+      while (current <= endDate) {
+        const day = current.getDay();
+        if (day !== 0 && day !== 6) { // 0 = Sonntag, 6 = Samstag
+          dates.push(current.toISOString().split("T")[0]);
+        }
+        current.setDate(current.getDate() + 1);
+      }
+    });
+
+  return dates;
+}
 function deleteWorkTimesByUser(userId) {
   const filtered = workTimes.filter(entry => entry.userId !== userId);
   localStorage.setItem("workTimes", JSON.stringify(filtered));

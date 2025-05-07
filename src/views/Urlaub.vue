@@ -24,7 +24,7 @@ function handleSubmit() {
   }
 
   if (startdatum.value && enddatum.value) {
-    addUrlaub(userId, startdatum.value, enddatum.value);
+    addUrlaub(userId, startdatum.value, enddatum.value, kommentar.value);
     urlaubsliste.value = getUrlaubeByUser(userId); // Liste aktualisieren
     startdatum.value = "";
     enddatum.value = "";
@@ -83,7 +83,7 @@ const PlatzhalterAktion = {
             <td>{{ new Date(urlaub.start).toLocaleDateString("de-DE") }}</td>
             <td>{{ new Date(urlaub.end).toLocaleDateString("de-DE") }}</td>
             <td>{{ urlaub.tage }}</td>
-            <td>{{ urlaub.kommentar }}</td>
+            <td>{{ urlaub.kommentar || "–" }}</td>
             <td><PlatzhalterAktion /></td>
           </tr>
         </tbody>

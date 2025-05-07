@@ -31,7 +31,7 @@ function addUrlaub(userId, start, end, kommentar) {
     start,
     end,
     tage, 
-    kommentar
+   kommentar: kommentar ?? ""
   });
 
   saveUrlaube(stored);

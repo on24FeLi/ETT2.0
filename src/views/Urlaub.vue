@@ -24,7 +24,7 @@ const PlatzhalterAktion = {
     <header>
       <h1>Urlaub</h1>
       <navigation/>
-<<<<<<< HEAD
+
     </header>
 
     <!-- Kalenderansicht -->
@@ -54,11 +54,10 @@ const PlatzhalterAktion = {
       <p v-else>Keine Urlaube geplant.</p>
     </div>
   </div>
-=======
-      </header>
-     </div>
-<CleanKalenderansicht/>
->>>>>>> 15d96f9ccff3ca863d1972657ce7c9d700fa8b29
+     
+  
+
+
 </template>
 
 <style scoped>

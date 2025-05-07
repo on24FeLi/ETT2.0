@@ -1,6 +1,7 @@
 <script setup>
 import { ref, computed } from "vue";
 import navigation from '@/components/navigation.vue';
+import CleanKalenderansicht from '@/components/CleanKalenderansicht.vue'
 </script>
 <template>
      <div>
@@ -9,7 +10,7 @@ import navigation from '@/components/navigation.vue';
       <navigation/>
       </header>
      </div>
-<p>Urlaub  // Hier kommt der HTML Part rein</p>
+<CleanKalenderansicht/>
 </template>
 <style scoped>
     header {

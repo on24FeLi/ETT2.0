@@ -58,24 +58,9 @@ function selectDate(day) {
   filteredEntries.value = allUserEntries.filter((entry) => entry.date === fullDate);
 }
 
-// Tag-Klasse (Farben für gearbeitet/nicht gearbeitet)
+// Tag-Klasse (neutral, keine Farben)
 function getDayClass(day) {
   if (!day) return "empty";
-
-  const year = date.value.getFullYear();
-  const month = String(date.value.getMonth() + 1).padStart(2, "0");
-  const dayString = String(day).padStart(2, "0");
-  const fullDate = `${year}-${month}-${dayString}`;
-
-  const allUserEntries = getWorkTimesByUser(userId);
-  const entry = allUserEntries.find((entry) => entry.date === fullDate);
-  forceUpdate.value;
-
-  if (entry) {
-    const sollStunden = arbeitszeitTyp === "Teilzeit" ? 6 : 8;
-    const gearbeitet = parseFloat(entry.workinghours);
-    return gearbeitet >= sollStunden ? "enough-worked" : "not-enough-worked";
-  }
   return "";
 }
 
@@ -90,19 +75,12 @@ onMounted(() => {
   renderCalendar();
 });
 </script>
-
 <template>
   <div class="calendar">
     <div class="calendar-header">
         <button @click="prevMonth">←</button>
         <div>{{ monthYear }}</div>
         <button @click="nextMonth">→</button>
-    </div>
-
-    <div class="progress-section">
-      <div class="progress-bar-container">
-        <div class="progress-bar"></div>
-      </div>
     </div>
 
     <div class="calendar-days">
@@ -154,30 +132,7 @@ onMounted(() => {
     </div>
   </div>
 </template>
-
 <style scoped>
-.progress-section {
-  text-align: center;
-  margin-bottom: 1.5rem;
-  font-size: 1rem;
-}
-
-.progress-bar-container {
-  width: 100%;
-  max-width: 450px;
-  height: 20px;
-  background-color: #eee;
-  border-radius: 10px;
-  overflow: hidden;
-  margin: 0.5rem auto;
-}
-
-.progress-bar {
-  height: 100%;
-  background-color: #90ac8f;
-  transition: width 0.3s ease-in-out;
-}
-
 .arbeitszeiten-tabelle {
   width: 100%;
   border-collapse: collapse;
@@ -203,20 +158,6 @@ onMounted(() => {
 
 .arbeitszeiten-tabelle tr:hover {
   background-color: #e6f7ff;
-}
-
-.enough-worked {
-  background-color: #d4edda;
-  border: 2px solid #28a745;
-  color: #155724;
-  font-weight: bold;
-}
-
-.not-enough-worked {
-  background-color: #f8d7da;
-  border: 2px solid #dc3545;
-  color: #721c24;
-  font-weight: bold;
 }
 
 .calendar {

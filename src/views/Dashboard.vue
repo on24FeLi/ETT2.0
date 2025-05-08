@@ -259,7 +259,7 @@ function goToNextMonth() {
           <td>{{ new Date(entry.date).toLocaleDateString() }}</td>
           <td>{{ entry.start }}</td>
           <td>{{ entry.end }}</td>
-          <td>{{ entry.workinghours }}</td>
+          <td>{{ Number(entry.workinghours).toFixed(2) }}</td>
         </tr>
       </tbody>
     </table>

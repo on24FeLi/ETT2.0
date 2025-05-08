@@ -144,7 +144,7 @@ const reloadWorkTimes = () => {
         <td>{{ new Date(entry.date).toLocaleDateString("de-DE") }}</td>
         <td>{{ entry.start }}</td>
         <td>{{ entry.end }}</td>
-        <td>{{ entry.workinghours }}</td>
+        <td>{{ Number(entry.workinghours).toFixed(2) }}</td>
         <td>
           {{ (entry.workinghours - sollStunden).toFixed(2) }}
         </td>
@@ -250,7 +250,6 @@ tbody tr:hover {
 }
 p {
   text-align: center;
-  margin-top: 2rem;
 }
 
 .table-wrapper {

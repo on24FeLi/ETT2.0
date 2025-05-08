@@ -284,7 +284,7 @@ const urlaubDatesSet = getUrlaubDates(userId);
 }
 
 .not-enough-worked {
-  border: 2px solid #dc3545; /* kräftiger rot Rand */
+  border: 2px solid #9A463D; /* kräftiger rot Rand */
 }
 .arbeitszeiten-tabelle th,
 .arbeitszeiten-tabelle td {

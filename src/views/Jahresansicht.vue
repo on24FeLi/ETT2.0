@@ -270,7 +270,7 @@ header h1 {
 }
 
 .not-enough-worked {
-  border: 2px solid #dc3545 !important;
+  border: 2px solid #9A463D !important;
 }
   .month h3 {
     text-align: center;

@@ -13,6 +13,7 @@ const startdatum = ref("");
 const enddatum = ref("");
 const kommentar = ref("");
 const editingUrlaub = ref(null);
+        
 
 onMounted(() => {
   if (userId) {
@@ -191,7 +192,7 @@ header h1 {
 
 /* ======= LISTE ======= */
 .urlaubsliste-container {
-  max-width: 900px;
+  max-width: 852px;
   margin: 3rem auto;
   padding: 2rem;
   background-color: #fff;

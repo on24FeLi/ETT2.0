@@ -92,6 +92,8 @@ function isUrlaubstag(day) {
     return fullDate >= u.start && fullDate <= u.end;
   });
 }
+
+
 </script>
 <template>
   <div class="calendar">

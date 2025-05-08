@@ -38,19 +38,19 @@
         <h3>Arbeitszeit am {{ selectedDateString }}</h3>
 
         <div class="time-input-group">
-          <label>Start:</label>
+          <label><strong>Start:</strong></label>
           <input v-model="startTime" type="time" />
           <span>Uhr</span>
         </div>
 
         <div class="time-input-group" style="margin-top: 1rem;">
-          <label>Stop:</label>
+          <label><strong>Stop:</strong></label>
           <input v-model="stopTime" type="time" />
           <span>Uhr</span>
         </div>
 
         <div class="time-input-group" style="margin-top: 1rem;">
-          <label>Gearbeitete Stunden:</label>
+          <label><strong>Gearbeitete Stunden:</strong></label>
           <input v-model="workedTime" type="text" placeholder="z. B. 07:30" />
           <span>h</span>
         </div>
@@ -295,5 +295,8 @@ const saveTime = () => {
   border-radius: 0.5rem;
   font-size: 1rem;
   cursor: pointer;
+}
+h3{
+  margin-bottom: 2rem;
 }
 </style>

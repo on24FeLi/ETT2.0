@@ -3,9 +3,13 @@ import { ref, computed } from "vue";
 import navigation from "@/components/navigation.vue";
 import { users, addUser, deleteUser, updateUser } from "@/utils/storageTest";
 import { deleteWorkTimesByUser } from "@/utils/Arbeitszeiten";
+import { getWorkTimesByUser } from "@/utils/Arbeitszeiten";
 
 const editingUser = ref(null);
 const showForm = ref(false);
+const selectedUserForWorkTimes = ref(null);
+const workTimesThisMonth = ref([]);
+const totalWorkedHours = ref(null);
 
 const form = ref({
   nachname: "",
@@ -118,6 +122,38 @@ function deleteUserCompletely(user) {
   }
 }
 
+function selectUser(user) {
+  selectedUserForWorkTimes.value = user;
+
+  const allTimes = getWorkTimesByUser(user.id);
+
+  const now = new Date();
+  const currentMonth = now.getMonth(); // 0-basiert
+  const currentYear = now.getFullYear();
+
+  // Filtere alle Einträge des aktuellen Monats
+  workTimesThisMonth.value = allTimes
+    .filter(entry => {
+      const d = new Date(entry.date);
+      return d.getMonth() === currentMonth && d.getFullYear() === currentYear;
+    })
+    .sort((a, b) => new Date(a.date) - new Date(b.date)); // optional: sortieren
+}
+
+// Hilfsfunktion für Wochentag
+function getWeekday(dateString) {
+  const days = ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"];
+  const d = new Date(dateString);
+  return days[d.getDay()];
+}
+
+// Summe der Stunden berechnen
+const totalHours = computed(() => {
+  return workTimesThisMonth.value.reduce((sum, entry) => {
+    const hours = parseFloat(entry.workinghours);
+    return sum + (isNaN(hours) ? 0 : hours);
+  }, 0).toFixed(2);
+});
 </script>
 
 
@@ -150,7 +186,8 @@ function deleteUserCompletely(user) {
           </thead>
           <tbody>
             <tr v-for="user in activeUsers" :key="user.id">
-              <td>{{ user.nachname }}</td>
+              <td @click="selectUser(user)" style="cursor: pointer; color: blue; text-decoration: underline;"> {{ user.nachname }} </td>
+
               <td>{{ user.vorname }}</td>
               <td>{{ user.email }}</td>
               <td>{{ user.arbeitszeitTyp }}</td>
@@ -168,9 +205,40 @@ function deleteUserCompletely(user) {
         </table>
       </div>
 
-      <!-- Platzhalter: Zeiterfassung -->
-      <div class="card" style="flex: 2">
-        <div class="section-title">Zeiterfassung</div>
+<!-- Zeiterfassung -->
+<div class="card" style="flex: 2">
+  <div class="Zeiterfassung">Zeiterfassung</div>
+
+  <div v-if="selectedUserForWorkTimes">
+    <p><strong>{{ selectedUserForWorkTimes.vorname }} {{ selectedUserForWorkTimes.nachname }}</strong></p>
+    <p>Geleistete Stunden im {{ new Date().toLocaleString('de-DE', { month: 'long' }) }}: {{ totalHours }} Stunden</p>
+
+    <table v-if="workTimesThisMonth.length">
+      <thead>
+        <tr>
+          <th>Tag</th>
+          <th>Datum</th>
+          <th>Beginn</th>
+          <th>Ende</th>
+          <th>Arbeitszeit</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="(entry, index) in workTimesThisMonth" :key="index">
+          <td>{{ getWeekday(entry.date) }}</td>
+          <td>{{ new Date(entry.date).toLocaleDateString() }}</td>
+          <td>{{ entry.start }}</td>
+          <td>{{ entry.end }}</td>
+          <td>{{ entry.workinghours }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div v-else>
+    <p>Bitte einen Mitarbeiter auswählen.</p>
+  </div>
+</div>
+
       </div>
 
       <!-- Platzhalter: Auswertung -->
@@ -246,7 +314,6 @@ function deleteUserCompletely(user) {
         </div>
       </div>
     </div>
-  </div>
 </template>
 
 <style scoped>
@@ -415,8 +482,49 @@ td {
 .edit {
   border-right: 0;
 }
+/* ZEITERFASSUNG: angepasstes Styling für bestehenden HTML-Code */
 
-/*#icons button:not(:last-child) {
-  margin-right: 20px;
-}*/
+.Zeiterfassung {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+  color: #333;
+}
+
+.card .Zeiterfassung + div p {
+  font-size: 1.1rem;
+  margin: 0.3rem 0;
+  color: #444;
+}
+
+.card .Zeiterfassung + div table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+  background-color: #fff;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.card .Zeiterfassung + div table th,
+.card .Zeiterfassung + div table td {
+  padding: 0.75rem 1rem;
+  border: 1px solid #e0dccc;
+  text-align: left;
+}
+
+.card .Zeiterfassung + div table th {
+  background-color: #f1ecdb;
+  font-weight: 600;
+}
+
+.card .Zeiterfassung + div table tr:nth-child(even) {
+  background-color: #fdfbf5;
+}
+
+.card .Zeiterfassung + div table tr:hover {
+  background-color: #f5f0e4;
+  transition: background-color 0.2s ease;
+}
 </style>

@@ -149,7 +149,7 @@ const reloadWorkTimes = () => {
               <td>{{ new Date(entry.date).toLocaleDateString('de-DE') }}</td>
               <td>{{ entry.start }}</td>
               <td>{{ entry.end }}</td>
-              <td>{{ entry.workinghours }}</td>
+              <td>{{ Number(entry.workinghours).toFixed(2) }}</td>
               <td>
         {{ (entry.workinghours - sollStunden).toFixed(2) }}
       </td>
@@ -252,7 +252,7 @@ h2 {
 .wochen-navigation span {
   font-size: 1.1rem;
   font-weight: 500;
-  color: #333;
+  
 }
 
 table {
@@ -285,8 +285,7 @@ tbody tr:hover {
 }
 p {
   text-align: center;
-  margin-top: 2rem;
   font-size: 1.1rem;
-  color: #666;
 }
+
 </style>

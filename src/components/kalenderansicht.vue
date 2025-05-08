@@ -238,7 +238,7 @@ const urlaubDatesSet = getUrlaubDates(userId);
             <tr v-for="(entry, index) in filteredEntries" :key="index">
               <td>{{ entry.start }}</td>
               <td>{{ entry.end }}</td>
-              <td>{{ entry.workinghours }}</td>
+              <td>{{ Number(entry.workinghours).toFixed(2) }}</td>
               <td>{{ calculateDifference(entry.workinghours) }}</td>
             </tr>
           </tbody>

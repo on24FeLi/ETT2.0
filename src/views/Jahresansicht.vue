@@ -197,7 +197,7 @@ const urlaubDatesSet = getUrlaubDates(userId);
                 <tr v-for="(entry, index) in filteredEntries[month - 1]" :key="index">
                   <td>{{ entry.start }}</td>
                   <td>{{ entry.end }}</td>
-                  <td>{{ entry.workinghours }}</td>
+                  <td>{{ Number(entry.workinghours).toFixed(2) }}</td>
                   <td>{{ calculateDifference(entry.workinghours) }}</td>
                 </tr>
               </tbody>
@@ -208,13 +208,12 @@ const urlaubDatesSet = getUrlaubDates(userId);
       </div>
     </div>
   </template>
-  
   <style scoped>
-  .urlaubstag {
-    border: 2px solid #5C6E91 !important;
-  
+.urlaubstag {
+  border: 2px solid #5C6E91 !important;
 }
-  header {
+
+header {
   background-color: #f1ecdb;
   display: flex;
   justify-content: space-between;
@@ -228,16 +227,17 @@ header h1 {
   padding: 0.2rem 1rem;
   display: inline-block;
 }
-  .year-header {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 1rem;
-    margin-top: 2rem;
-  }
-  
-  .year-header button{
-    background-color: #f3e9d2;
+
+.year-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.year-header button {
+  background-color: #f3e9d2;
   border: none;
   padding: 0.6rem 1.2rem;
   border-radius: 8px;
@@ -245,38 +245,40 @@ header h1 {
   font-size: 17px;
   cursor: pointer;
   transition: background-color 0.3s ease;
-  }
+}
 
-  .year-header button:hover{
-    background-color: #e0dcca;
-  }
-  
-  .year-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 2rem;
-    padding: 1rem;
-  }
-  
-  .month {
-    background: #fff;
-    padding: 1rem;
-    border-radius: 10px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-  }
-  .enough-worked {
-  /* sanftes Grün */
+.year-header button:hover {
+  background-color: #e0dcca;
+}
+
+.year-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+  padding: 1rem;
+}
+
+.month {
+  background: #fff;
+  padding: 1rem;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.enough-worked {
   border: 2px solid #90AC8F !important;
 }
 
 .not-enough-worked {
   border: 2px solid #9A463D !important;
 }
-  .month h3 {
-    text-align: center;
-    margin-bottom: 0.5rem;
-  }
-  .calendar-dates div:hover {
+
+.month h3 {
+  text-align: center;
+  margin-bottom: 0.5rem;
+}
+
+.calendar-dates div:hover {
   background-color: #d1e0ff;
   cursor: pointer;
 }
@@ -285,35 +287,38 @@ header h1 {
 .not-enough-worked:hover {
   opacity: 0.9;
 }
-  .calendar-days, .calendar-dates {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    text-align: center;
-    gap: 0.2rem;
-  }
-  
-  .calendar-days div {
-    font-weight: bold;
-    font-size: 0.75rem;
-    color: #555;
-  }
-  
-  .calendar-dates div {
-    height: 30px;
-    font-size: 0.75rem;
-    background-color: #f0f0f0;
-    border-radius: 4px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-  }
-  
-  .calendar-dates div.empty {
-    background-color: transparent;
-    cursor: default;
-  }
-  .jahresarbeitszeit-balken {
+
+.calendar-days,
+.calendar-dates {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  text-align: center;
+  gap: 0.2rem;
+}
+
+.calendar-days div {
+  font-weight: bold;
+  font-size: 0.75rem;
+  color: #555;
+}
+
+.calendar-dates div {
+  height: 30px;
+  font-size: 0.75rem;
+  background-color: #f0f0f0;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.calendar-dates div.empty {
+  background-color: transparent;
+  cursor: default;
+}
+
+.jahresarbeitszeit-balken {
   margin: 1rem auto 2rem auto;
   text-align: center;
   font-size: 1rem;
@@ -334,29 +339,62 @@ header h1 {
   background-color: #90AC8F;
   transition: width 0.3s ease-in-out;
 }
-table, th, td {
-  border: 1px solid black;
-  border-collapse: collapse;
-}
 
-th, td {
-  padding: 8px;
-  text-align: center;
-}
-
-.arbeitszeiten-tabelle{
+table.arbeitszeiten-tabelle {
   width: 100%;
-  border: 1px solid black;
   border-collapse: collapse;
   margin-top: 10px;
+  font-size: 0.9rem;
+  border: 1px solid #e0dccc;
+  border-radius: 10px;
+  overflow: hidden;
 }
+
 .arbeitszeiten-tabelle th,
 .arbeitszeiten-tabelle td {
-  border: 1px solid black;
+  border: 1px solid #e0dccc;
   padding: 8px;
   text-align: center;
 }
+
 .arbeitszeiten-tabelle thead tr {
-    background-color: #f3e9d2; 
+  background-color: #f3e9d2;
+}
+
+.arbeitszeiten-tabelle tbody tr:nth-child(even) {
+  background-color: #f9f6f1;
+}
+
+.arbeitszeiten-tabelle tbody tr:last-child {
+  background-color: #ffffff;
+}
+
+.entries-section {
+  background-color: #ffffff; /* Weiß statt beige */
+  margin-top: 1rem;
+  padding: 1rem;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.entries-section h4 {
+  margin-bottom: 0.5rem;
+  font-size: 1rem;
+  font-weight: bold;
+  color: #444;
+}
+
+@media (max-width: 768px) {
+  .year-grid {
+    grid-template-columns: 1fr;
   }
-  </style>
+
+  .arbeitszeiten-tabelle {
+    font-size: 0.8rem;
+  }
+}
+.arbeitszeiten-tabelle tbody tr:last-child td {
+  background-color: #ffffff;
+  border: 1px solid #e0dccc;
+}
+</style>

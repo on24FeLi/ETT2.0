@@ -120,37 +120,41 @@ const reloadWorkTimes = () => {
           <div class="progress-bar" :style="{ width: progressPercent + '%' }"></div>
         </div>
         <p v-if="monthlyOvertime > 0">Überstunden: +{{ monthlyOvertime.toFixed(2) }} Stunden</p>
-        <p v-else>Verbleibende Stunden: {{ monthlyRemaining.toFixed(2) }} Stunden</p>
+        <p v-else>Verbleibende Stunden: {{ monthlyRemaining.toFixed(2) }} Stunden</p> 
+       <p v-else>Keine Einträge für diesen Monat.</p>
       </div>
-      <table v-if="workTimes.length">
-        <thead>
-          <tr>
-            <th>Tag</th>
-            <th>Datum</th>
-            <th>Beginn</th>
-            <th>Ende</th>
-            <th>Arbeitszeit</th>
+      <div class="table-wrapper" v-if="workTimes.length">
+  <table class="scroll-table">
+    <thead>
+      <tr>
+        <th>Tag</th>
+        <th>Datum</th>
+        <th>Beginn</th>
+        <th>Ende</th>
+        <th>Arbeitszeit</th>
+        <th>+/- Stunden</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr
+        v-for="(entry, index) in workTimes"
+        :key="index"
+      >
+        <td>{{ getWeekdayAbbreviation(entry.date) }}</td>
+        <td>{{ new Date(entry.date).toLocaleDateString("de-DE") }}</td>
+        <td>{{ entry.start }}</td>
+        <td>{{ entry.end }}</td>
+        <td>{{ Number(entry.workinghours).toFixed(2) }}</td>
+        <td>
+          {{ (entry.workinghours - sollStunden).toFixed(2) }}
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+ 
+<DayEditor :userId="userId" :arbeitszeitTyp="arbeitszeitTyp" @workTimeSaved="reloadWorkTimes" />
    
-    <th>Überstunden / Minusstunden   <DayEditor :userId="userId" :arbeitszeitTyp="arbeitszeitTyp" @workTimeSaved="reloadWorkTimes" /> </th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr
-            v-for="(entry, index) in workTimes"
-            :key="index"
-            :class="{ 'odd-row': index % 2 === 1 }"
-          >
-            <td>{{ getWeekdayAbbreviation(entry.date) }}</td>
-            <td>{{ new Date(entry.date).toLocaleDateString("de-DE") }}</td>
-            <td>{{ entry.start }}</td>
-            <td>{{ entry.end }}</td>
-            <td>{{ entry.workinghours }}</td>
-            <td>{{ (entry.workinghours - sollStunden).toFixed(2) }}</td>
-          </tr>
-        </tbody>
-      </table>
-
-      <p v-else>Keine Einträge für diesen Monat.</p>
     </div>
   </div>
 </template>
@@ -179,7 +183,7 @@ const reloadWorkTimes = () => {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 2rem;
+  
 }
 
 .monatsansicht-navigation {
@@ -217,34 +221,80 @@ const reloadWorkTimes = () => {
 table {
   width: 100%;
   border-collapse: collapse;
-  text-align: center;
+  font-size: 0.95rem;
+  background-color: #fff;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
 }
 
 th,
 td {
-  padding: 1rem;
-  border-bottom: 1px solid #eee;
+  padding: 0.75rem 1rem;
+  border: 1px solid #e0dccc;
+  text-align: left;
 }
 
 th {
-  background-color: #f3e9d2;
-  font-weight: bold;
+  background-color: #f1ecdb;
+  font-weight: 600;
 }
 
 tbody tr:nth-child(even) {
-  background-color: #f9f9f9;
+  background-color: #fdfbf5;
 }
 
 tbody tr:hover {
-  background-color: #f0f0f0;
+  background-color: #f5f0e4;
+  transition: background-color 0.2s ease;
 }
-
-tbody tr.odd-row {
-  background-color: #ffffff;
-}
-
 p {
   text-align: center;
-  margin-top: 2rem;
 }
+
+.table-wrapper {
+  max-height: 300px;
+  overflow-y: auto;
+  border: 1px solid #e0dccc;
+  border-radius: 8px;
+}
+
+.scroll-table {
+  border-collapse: collapse;
+  width: 100%;
+  min-width: 700px;
+  table-layout: fixed;
+}
+
+.scroll-table th {
+  position: sticky;
+  top: 0;
+  background-color: #f1ecdb;
+  z-index: 2;
+  padding: 0.75rem 1rem;
+  font-weight: 600;
+  border-bottom: 1px solid #e0dccc;
+  text-align: left;
+}
+
+
+.scroll-table tbody td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #e0dccc;
+  background-color: #fff;
+  text-align: left;
+  word-wrap: break-word;
+}
+
+.scroll-table tbody tr:nth-child(even) td {
+  background-color: #fdfbf5;
+}
+
+.scroll-table tbody tr:hover td {
+  background-color: #f5f0e4;
+  transition: background-color 0.2s ease;
+}
+
 </style>
+
+

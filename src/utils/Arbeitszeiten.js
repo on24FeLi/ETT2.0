@@ -1,5 +1,19 @@
 const workTimes = JSON.parse(localStorage.getItem("workTimes")) || [];
 
+function calcWorkingHours(start, end) {
+  const [startH, startM] = start.split(":").map(Number);
+  const [endH, endM] = end.split(":").map(Number);
+
+  const startTotalMinutes = startH * 60 + startM;
+  const endTotalMinutes = endH * 60 + endM;
+  const diffMinutes = endTotalMinutes - startTotalMinutes;
+
+  // Verhindere negative Werte
+  if (diffMinutes <= 0) return 0;
+
+  const hours = diffMinutes / 60;
+  return Number(hours.toFixed(2)); // ← hier runden!
+}
 function addOrUpdateWorkTime(userId, date, workinghours, start, end) {
   const workTimes = JSON.parse(localStorage.getItem("workTimes")) || [];
 
@@ -8,15 +22,32 @@ function addOrUpdateWorkTime(userId, date, workinghours, start, end) {
     (entry) => !(entry.userId === userId && entry.date === date)
   );
 
-  // Füge neuen Eintrag hinzu
-  updated.push({ userId, date, workinghours, start, end });
+  let hours = workinghours;
+  if (!workinghours && start && end) {
+    hours = calcWorkingHours(start, end);
+  } else {
+    hours = Number(parseFloat(workinghours).toFixed(2));
+  }
+
+  if (!isNaN(hours)) {
+    updated.push({
+      userId,
+      date,
+      workinghours: hours,
+      start,
+      end
+    });
+  }
 
   localStorage.setItem("workTimes", JSON.stringify(updated));
 }
 function getWorkTimesByUser(userId) {
   const allTimes = JSON.parse(localStorage.getItem("workTimes")) || [];
   const urlaubDates = expandUrlaubeToDates(userId);
-
+  const allUsers = JSON.parse(localStorage.getItem("users")) || [];
+  const currentUser = allUsers.find(u => u.id === userId);
+  const isTeilzeit = currentUser?.arbeitszeitTyp === "Teilzeit";
+  const urlaubsstunden = isTeilzeit ? 6 : 8;
   const entriesForUser = allTimes.filter(t => t.userId === userId);
 
   // Urlaubstage ergänzen, wenn kein Eintrag vorhanden ist
@@ -28,7 +59,7 @@ function getWorkTimesByUser(userId) {
         date,
         start: "Urlaub",
         end: "Urlaub",
-        workinghours: 8
+        workinghours: Number(urlaubsstunden.toFixed(2))
       });
     }
   });

@@ -252,6 +252,7 @@ p {
   text-align: center;
   margin-top: 2rem;
 }
+
 .table-wrapper {
   max-height: 300px;
   overflow-y: auto;
@@ -296,3 +297,5 @@ p {
 }
 
 </style>
+
+

@@ -212,22 +212,32 @@ header h1 {
 .urlaubsliste {
   width: 100%;
   border-collapse: collapse;
-  text-align: center;
+  font-size: 0.95rem;
+  background-color: #fff;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
 }
+
 .urlaubsliste th,
 .urlaubsliste td {
-  padding: 1rem;
-  border-bottom: 1px solid #eee;
+  padding: 0.75rem 1rem;
+  border: 1px solid #e0dccc;
+  text-align: left;
 }
+
 .urlaubsliste th {
-  background-color: #f3e9d2;
-  font-weight: bold;
+  background-color: #f1ecdb;
+  font-weight: 600;
 }
+
 .urlaubsliste tr:nth-child(even) {
-  background-color: #f9f9f9;
+  background-color: #fdfbf5;
 }
+
 .urlaubsliste tr:hover {
-  background-color: #f0f0f0;
+  background-color: #f5f0e4;
+  transition: background-color 0.2s ease;
 }
 
 /* ======= BEARBEITEN BUTTON ======= */

@@ -49,7 +49,8 @@ function updateUrlaub(id, start, end, kommentar) {
   const index = stored.findIndex(u => u.id === id);
 
   if (index !== -1) {
-    stored[index] = { ...stored[index], start, end, kommentar };
+    const tage = calculateTage(start, end);
+    stored[index] = { ...stored[index], start, end,tage, kommentar};
     saveUrlaube(stored);
   } else {
     console.warn("Urlaub nicht gefunden.");

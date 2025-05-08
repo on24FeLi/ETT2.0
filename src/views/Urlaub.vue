@@ -7,7 +7,7 @@ import { addUrlaub, getUrlaubeByUser } from '@/utils/Urlaubszeiten';
 
 const user = JSON.parse(localStorage.getItem('loggedInUser'));
 const userId = user?.id ?? null;
-
+const urlaubslisteKey = ref(0);
 const urlaubsliste = ref([]);
 const startdatum = ref("");
 const enddatum = ref("");
@@ -44,6 +44,10 @@ function handleEdit(urlaub) {
 function clearEdit() {
   editingUrlaub.value = null;
 }
+const reloadUrlaube = () => {
+  urlaubsliste.value = getUrlaubeByUser(userId);
+  urlaubslisteKey.value++; // erzwingt Kalender-Update
+};
 </script>
 
 <template>
@@ -68,7 +72,7 @@ function clearEdit() {
       </form>
 
       <div class="calendar-wrapper">
-        <CleanKalenderansicht :urlaubsliste="urlaubsliste" />
+        <CleanKalenderansicht :urlaubsliste="urlaubsliste" :key="urlaubslisteKey" />
       </div>
     </div>
 
@@ -107,13 +111,13 @@ function clearEdit() {
     <div class="modal-overlay" v-if="editingUrlaub">
       <div class="modal-content">
         <UrlaubBearbeitenForm
-          :urlaub="editingUrlaub"
-          @cancel="clearEdit"
-          @saved="() => {
-            urlaubsliste.value = getUrlaubeByUser(userId);
-            clearEdit();
-          }"
-        />
+  :urlaub="editingUrlaub"
+  @cancel="clearEdit"
+  @saved="(result) => {
+    reloadUrlaube();
+    clearEdit();
+  }"
+/>
       </div>
     </div>
   </div>

@@ -384,18 +384,18 @@ header h1 {
 }
 
 .card {
-  border: 1px solid black;
   border-radius: 1rem;
   padding: 1rem;
-  flex: 1;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
 }
 
 .employee-list {
   flex: 0 1 400px;
 }
 .archived-list {
-  margin-left: 30px;
-  width: 560px;
+ padding-left: 12px;
+ margin-left: 30px;
+ padding-right: 12px;
 }
 
 table {
@@ -586,18 +586,18 @@ td {
 }
 .bottom-container {
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: row;
   gap: 1rem;
-  padding: 2rem;
   width: 100%;
+  box-sizing: border-box;
 }
-
 .urlaub-box {
-  flex: 2;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.2rem;
-  font-weight: bold;
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  margin-right: 30px;
 }
 
 .urlaub-box .Urlaub {

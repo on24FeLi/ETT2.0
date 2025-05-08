@@ -150,7 +150,9 @@ const reloadWorkTimes = () => {
               <td>{{ entry.start }}</td>
               <td>{{ entry.end }}</td>
               <td>{{ entry.workinghours }}</td>
-              <td>{{ (entry.workinghours - sollStunden).toFixed(2) }}</td>
+              <td>
+        {{ (entry.workinghours - sollStunden).toFixed(2) }}
+      </td>
             </tr>
           </tbody>
         </table>
@@ -256,34 +258,31 @@ h2 {
 table {
   width: 100%;
   border-collapse: collapse;
-  margin-top: 1rem;
+  font-size: 0.95rem;
+  background-color: #fff;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
 }
 
 th, td {
-  border: 1px solid #ccc;
-  padding: 0.75rem;
+  padding: 0.75rem 1rem;
+  border: 1px solid #e0dccc;
   text-align: left;
 }
 
 th {
-  background-color: #f0f0f0;
-  font-weight: bold;
-  color: #222;
+  background-color: #f1ecdb;
+  font-weight: 600;
+}
+tbody tr:nth-child(even) {
+  background-color: #fdfbf5;
 }
 
-td {
-  background-color: #fff;
-  color: #333;
+tbody tr:hover {
+  background-color: #f5f0e4;
+  transition: background-color 0.2s ease;
 }
-
-tbody tr:nth-child(even) td {
-  background-color: #f9f9f9;
-}
-
-tbody tr:hover td {
-  background-color: #f0f0f0;
-}
-
 p {
   text-align: center;
   margin-top: 2rem;

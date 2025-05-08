@@ -180,7 +180,6 @@ function goToNextMonth() {
 
 
 <template>
-  <div>
     <header>
       <h1>Dashboard</h1>
       <navigation></navigation>
@@ -208,7 +207,7 @@ function goToNextMonth() {
           </thead>
           <tbody>
             <tr v-for="user in activeUsers" :key="user.id">
-              <td @click="selectUser(user)" style="cursor: pointer; color: blue; text-decoration: underline;"> {{ user.nachname }} </td>
+              <td @click="selectUser(user)" style="cursor: pointer;"> {{ user.nachname }} </td>
 
               <td>{{ user.vorname }}</td>
               <td>{{ user.email }}</td>
@@ -271,12 +270,6 @@ function goToNextMonth() {
 </div>
 
       </div>
-
-      <!-- Platzhalter: Auswertung -->
-      <div class="card" style="width: 100%">
-        <div class="section-title">Auswertung</div>
-      </div>
-    </div>
 
     <!-- Archivierte Mitarbeiter -->
     <div class="card employee-list archived-list">

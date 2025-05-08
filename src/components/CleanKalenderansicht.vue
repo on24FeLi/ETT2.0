@@ -92,6 +92,8 @@ function isUrlaubstag(day) {
     return fullDate >= u.start && fullDate <= u.end;
   });
 }
+
+
 </script>
 <template>
   <div class="calendar">
@@ -121,33 +123,34 @@ function isUrlaubstag(day) {
         {{ day }}
       </div>
     </div>
+<!--
+<div v-if="selectedDate" class="entries-section">
+  <h4>Zeiteinträge für den {{ new Date(selectedDate).toLocaleDateString("de-DE") }}</h4>
 
-    <div v-if="selectedDate" class="entries-section">
-      <h4>Zeiteinträge für den {{ new Date(selectedDate).toLocaleDateString("de-DE") }}</h4>
+  <div v-if="filteredEntries.length">
+    <table class="arbeitszeiten-tabelle">
+      <thead>
+        <tr>
+          <th>Beginn</th>
+          <th>Ende</th>
+          <th>Arbeitszeit (h)</th>
+          <th>Überstunden</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="(entry, index) in filteredEntries" :key="index">
+          <td>{{ entry.start }}</td>
+          <td>{{ entry.end }}</td>
+          <td>{{ entry.workinghours }}</td>
+          <td>{{ calculateDifference(entry.workinghours) }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 
-      <div v-if="filteredEntries.length">
-        <table class="arbeitszeiten-tabelle">
-          <thead>
-            <tr>
-              <th>Beginn</th>
-              <th>Ende</th>
-              <th>Arbeitszeit (h)</th>
-              <th>Überstunden</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="(entry, index) in filteredEntries" :key="index">
-              <td>{{ entry.start }}</td>
-              <td>{{ entry.end }}</td>
-              <td>{{ entry.workinghours }}</td>
-              <td>{{ calculateDifference(entry.workinghours) }}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <p v-else>Keine Zeiteinträge für diesen Tag.</p>
-    </div>
+  <p v-else>Keine Zeiteinträge für diesen Tag.</p>
+</div>
+-->
   </div>
 </template>
 <style scoped>

@@ -275,8 +275,13 @@ const urlaubDatesSet = getUrlaubDates(userId);
 }
 .arbeitszeiten-tabelle {
   width: 100%;
-  border-collapse: collapse;
+  border-collapse: separate;
+  border-spacing: 0;
   margin-top: 1rem;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 0 0 1px #e0e0e0;
+  font-size: 1rem;
 }
 
 .enough-worked {
@@ -288,23 +293,32 @@ const urlaubDatesSet = getUrlaubDates(userId);
 }
 .arbeitszeiten-tabelle th,
 .arbeitszeiten-tabelle td {
-  border: 1px solid #ccc;
-  padding: 0.75rem;
+  padding: 0.75rem 1rem;
   text-align: center; /* Inhalte mittig */
-  vertical-align: middle;
+  border: 1px solid #f0f0f0;
 }
 
 .arbeitszeiten-tabelle th {
-  background-color: #f0f0f0;
+  background-color: #f2eddb;
   font-weight: bold;
+  color: #222;
+}
+
+.arbeitszeiten-tabelle td{
+  background-color: #fefdf9;
+  color: #333;
 }
 
 .arbeitszeiten-tabelle tr:nth-child(even) {
-  background-color: #fafafa;
+  background-color: #fdfcf8;
+}
+
+.arbeitszeiten-tabelletr_last-child td{
+  border-bottom: none;
 }
 
 .arbeitszeiten-tabelle tr:hover {
-  background-color: #e6f7ff;
+  background-color: #f3f6f9;
 }
 
 .wrapper {
@@ -405,7 +419,7 @@ header h1 {
 
 .entries-section {
   margin-top: 2rem;
-  width: 300px;
+  width: 100%;
 }
 
 .entry {

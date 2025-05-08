@@ -109,6 +109,15 @@ function resetForm() {
   };
   editingUser.value = null;
 }
+
+function deleteUserCompletely(user) {
+  if (confirm(`Möchtest du ${user.vorname} ${user.nachname} unwiderruflich löschen?`)) {
+    deleteUser(user.id);
+    deleteWorkTimesByUser(user.id);
+    userList.value = [...users];
+  }
+}
+
 </script>
 
 
@@ -151,7 +160,7 @@ function resetForm() {
                   <img src="/public/edit.png" alt="Edit" />
                 </button>
                 <button @click="archiveUser(user)">
-                  <img src="/public/delete.png" alt="Archivieren" />
+                  <img src="/public/archive.png" alt="Archivieren" />
                 </button>
               </td>
             </tr>
@@ -184,17 +193,28 @@ function resetForm() {
               <th>E-Mail</th>
               <th>Arbeitszeit</th>
               <th>HR</th>
+              <th>Aktionen</th>
             </tr>
           </thead>
           <tbody>
-            <tr v-for="user in archivedUsers" :key="user.id">
-              <td>{{ user.nachname }}</td>
-              <td>{{ user.vorname }}</td>
-              <td>{{ user.email }}</td>
-              <td>{{ user.arbeitszeitTyp }}</td>
-              <td>{{ user.isHR ? "Ja" : "Nein" }}</td>
-            </tr>
-          </tbody>
+  <tr v-for="user in archivedUsers" :key="user.id">
+    <td>{{ user.nachname }}</td>
+    <td>{{ user.vorname }}</td>
+    <td>{{ user.email }}</td>
+    <td>{{ user.arbeitszeitTyp }}</td>
+    <td>{{ user.isHR ? "Ja" : "Nein" }}</td>
+    <td id="icons">
+      <button @click="restoreUser(user)">
+  <img src="/public/unarchive.png" alt="Wiederherstellen" />
+</button>
+
+      <button @click="deleteUserCompletely(user)">
+        <img src="/public/delete.png" alt="Löschen" />
+      </button>
+    </td>
+  </tr>
+</tbody>
+
         </table>
       </div>
 
@@ -279,7 +299,7 @@ header h1 {
 }
 .archived-list {
   margin-left: 30px;
-  width: 570px;
+  width: 560px;
 }
 
 table {
@@ -374,6 +394,7 @@ td {
 #icons img {
   width: 25px;
   height: 25px;
+  padding-left: 7px;
 }
 
 #icons button {
@@ -385,16 +406,17 @@ td {
 
 #icons {
   background-color: lightgrey;
-  justify-content: center; /* zentriert den Inhalt */
+  justify-content: center;
   align-items: center;
-  padding: 5px; /* gleichmäßiger Innenabstand */
+  padding: 5px;
+  gap: 15px; /* Abstand zwischen den Icons */
 }
 
 .edit {
   border-right: 0;
 }
 
-#icons button:not(:last-child) {
+/*#icons button:not(:last-child) {
   margin-right: 20px;
-}
+}*/
 </style>

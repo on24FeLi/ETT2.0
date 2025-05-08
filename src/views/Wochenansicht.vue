@@ -167,7 +167,7 @@ const reloadWorkTimes = () => {
 .arbeitsstunden-balken {
   margin-top: 2rem;
   text-align: center;
-  font-size: 1.1rem;
+  font-weight: bold;
 }
 
 .progress-bar-container {
@@ -251,7 +251,7 @@ h2 {
 
 .wochen-navigation span {
   font-size: 1.1rem;
-  font-weight: 500;
+  font-weight: bold;
   
 }
 

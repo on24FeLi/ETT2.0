@@ -271,44 +271,49 @@ function goToNextMonth() {
 
       </div>
 
-    <!-- Archivierte Mitarbeiter -->
-    <div class="card employee-list archived-list">
-        <div class="section-title">
-          <span>Archivierte Mitarbeiter</span>
-        </div>
+<div class="bottom-container">
+  <!-- Archivierte Mitarbeiter -->
+  <div class="card employee-list archived-list">
+    <div class="section-title">
+      <span>Archivierte Mitarbeiter</span>
+    </div>
 
-        <table>
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Vorname</th>
-              <th>E-Mail</th>
-              <th>Arbeitszeit</th>
-              <th>HR</th>
-              <th>Aktionen</th>
-            </tr>
-          </thead>
-          <tbody>
-  <tr v-for="user in archivedUsers" :key="user.id">
-    <td>{{ user.nachname }}</td>
-    <td>{{ user.vorname }}</td>
-    <td>{{ user.email }}</td>
-    <td>{{ user.arbeitszeitTyp }}</td>
-    <td>{{ user.isHR ? "Ja" : "Nein" }}</td>
-    <td id="icons">
-      <button @click="restoreUser(user)">
-  <img src="/public/unarchive.png" alt="Wiederherstellen" />
-</button>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Vorname</th>
+          <th>E-Mail</th>
+          <th>Arbeitszeit</th>
+          <th>HR</th>
+          <th>Aktionen</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="user in archivedUsers" :key="user.id">
+          <td>{{ user.nachname }}</td>
+          <td>{{ user.vorname }}</td>
+          <td>{{ user.email }}</td>
+          <td>{{ user.arbeitszeitTyp }}</td>
+          <td>{{ user.isHR ? "Ja" : "Nein" }}</td>
+          <td id="icons">
+            <button @click="restoreUser(user)">
+              <img src="/public/unarchive.png" alt="Wiederherstellen" />
+            </button>
+            <button @click="deleteUserCompletely(user)">
+              <img src="/public/delete.png" alt="Löschen" />
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 
-      <button @click="deleteUserCompletely(user)">
-        <img src="/public/delete.png" alt="Löschen" />
-      </button>
-    </td>
-  </tr>
-</tbody>
-
-        </table>
-      </div>
+  <!-- Urlaub -->
+  <div class="card urlaub-box">
+    <div class="Urlaub">Urlaub</div>
+  </div>
+</div>
 
     <!-- FORMULAR-OVERLAY -->
     <div class="overlay" v-if="showForm">
@@ -578,5 +583,24 @@ td {
 .zeiterfassung-month-button:hover {
   background-color: #e9e2cf;
   transform: scale(1.05);
+}
+.bottom-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  padding: 2rem;
+  width: 100%;
+}
+
+.urlaub-box {
+  flex: 2;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.urlaub-box .Urlaub {
+  color: #333;
 }
 </style>

@@ -157,6 +157,7 @@ header h1 {
   transform: translateX(-20px);
   position: relative;
   left: -80px;
+  height: 362px;
 }
 .urlaub-formular label {
   display: block;

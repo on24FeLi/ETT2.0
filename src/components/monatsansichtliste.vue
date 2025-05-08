@@ -250,7 +250,6 @@ tbody tr:hover {
 }
 p {
   text-align: center;
-  margin-top: 2rem;
 }
 
 .table-wrapper {

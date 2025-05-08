@@ -285,7 +285,6 @@ tbody tr:hover {
 }
 p {
   text-align: center;
-  margin-top: 2rem;
   font-size: 1.1rem;
   color: #666;
 }

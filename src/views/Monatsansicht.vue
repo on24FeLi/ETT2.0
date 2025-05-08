@@ -100,6 +100,7 @@ header h1 {
 .switcher-container {
   padding: 2rem;
   text-align: center;
+  font-weight: bold;
  
 }
 

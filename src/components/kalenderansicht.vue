@@ -377,9 +377,9 @@ header h1 {
 }
 
 .calendar-days div {
-  font-weight: bold;
+  font-weight: lighter;
   padding: 0.5rem 0;
-  color: #555;
+  color: black;
 }
 
 .calendar-dates div {

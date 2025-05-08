@@ -1,6 +1,8 @@
 <script setup>
 import { ref, watch } from 'vue';
-import { deleteUrlaub, updateUrlaub } from '@/utils/Urlaubszeiten';
+import { deleteUrlaub, updateUrlaub, getUrlaubeByUser } from '@/utils/Urlaubszeiten';
+const user = JSON.parse(localStorage.getItem('loggedInUser'));
+const userId = user?.id ?? null;
 
 const props = defineProps({
   urlaub: Object
@@ -20,20 +22,20 @@ watch(() => props.urlaub, (newVal) => {
   }
 }, { immediate: true });
 
-function handleSave() {
+async function handleSave() {
   if (!editedStart.value || !editedEnd.value) {
     console.warn("Start- und Enddatum müssen ausgefüllt sein.");
     return;
   }
 
-  // Beispielhafte Speicherung
-  updateUrlaub(props.urlaub.id, editedStart.value, editedEnd.value, kommentar.value);
-  emit('saved');
-}
+  await updateUrlaub(props.urlaub.id, editedStart.value, editedEnd.value, kommentar.value);
+  emit('saved', { updated: true });
+  }
 
-function handleDelete() {
+
+async function handleDelete() {
   deleteUrlaub(props.urlaub.id);
-  emit('saved');
+  emit('saved', { updated: true });
 }
 </script>
 

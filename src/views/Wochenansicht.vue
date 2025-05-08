@@ -252,7 +252,7 @@ h2 {
 .wochen-navigation span {
   font-size: 1.1rem;
   font-weight: 500;
-  color: #333;
+  
 }
 
 table {
@@ -286,6 +286,5 @@ tbody tr:hover {
 p {
   text-align: center;
   font-size: 1.1rem;
-  color: #666;
 }
 </style>

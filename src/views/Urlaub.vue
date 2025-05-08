@@ -142,26 +142,34 @@ header h1 {
 /* ======= CONTAINER ======= */
 .urlaub-container {
   display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  gap: 3rem;
-  max-width: 1200px;
-  margin: 2rem auto;
-  padding: 2rem;
-  flex-wrap: nowrap;
-}
+  align-items: stretch; /* gleiche Höhe */
+  gap: 2rem;
+  max-width: 852px;
+  margin: 2rem auto; }
 
 /* ======= FORMULAR ======= */
 .urlaub-formular {
   background-color: #ffffff;
   padding: 20px;
   border-radius: 10px;
-  width: 300px;
+  width: 100%;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  transform: translateX(-20px);
-  position: relative;
-  left: -80px;
-  height: 362px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.urlaub-formular, .calendar-wrapper {
+  flex: 1;
+  box-sizing: border-box;
+  
+}
+.calendar-wrapper {
+  flex: 1;
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  box-sizing: border-box;
 }
 .urlaub-formular label {
   display: block;
@@ -188,21 +196,17 @@ header h1 {
   background-color: lightgrey;
 }
 
-/* ======= KALENDER ======= */
-.calendar-wrapper {
-  width: 320px;
-  display: flex;
-  justify-content: center;
-}
 
 /* ======= LISTE ======= */
 .urlaubsliste-container {
   max-width: 852px;
-  margin: 3rem auto;
+  width: 100%;
+  margin: 2rem auto;
   padding: 2rem;
   background-color: #fff;
   border-radius: 12px;
   box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.1);
+  box-sizing: border-box;
 }
 .urlaubsliste-container h2 {
   font-size: 1.5rem;

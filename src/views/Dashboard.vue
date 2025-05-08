@@ -9,7 +9,9 @@ const editingUser = ref(null);
 const showForm = ref(false);
 const selectedUserForWorkTimes = ref(null);
 const workTimesThisMonth = ref([]);
-const totalWorkedHours = ref(null);
+const selectedMonth = ref(new Date().getMonth());
+const selectedYear = ref(new Date().getFullYear());
+
 
 const form = ref({
   nachname: "",
@@ -124,21 +126,9 @@ function deleteUserCompletely(user) {
 
 function selectUser(user) {
   selectedUserForWorkTimes.value = user;
-
-  const allTimes = getWorkTimesByUser(user.id);
-
-  const now = new Date();
-  const currentMonth = now.getMonth(); // 0-basiert
-  const currentYear = now.getFullYear();
-
-  // Filtere alle Einträge des aktuellen Monats
-  workTimesThisMonth.value = allTimes
-    .filter(entry => {
-      const d = new Date(entry.date);
-      return d.getMonth() === currentMonth && d.getFullYear() === currentYear;
-    })
-    .sort((a, b) => new Date(a.date) - new Date(b.date)); // optional: sortieren
+  updateWorkTimes(); // statt direkter Filterung
 }
+
 
 // Hilfsfunktion für Wochentag
 function getWeekday(dateString) {
@@ -154,6 +144,38 @@ const totalHours = computed(() => {
     return sum + (isNaN(hours) ? 0 : hours);
   }, 0).toFixed(2);
 });
+function updateWorkTimes() {
+  if (!selectedUserForWorkTimes.value) return;
+
+  const allTimes = getWorkTimesByUser(selectedUserForWorkTimes.value.id);
+
+  workTimesThisMonth.value = allTimes
+    .filter(entry => {
+      const d = new Date(entry.date);
+      return d.getMonth() === selectedMonth.value && d.getFullYear() === selectedYear.value;
+    })
+    .sort((a, b) => new Date(a.date) - new Date(b.date));
+}
+function goToPreviousMonth() {
+  if (selectedMonth.value === 0) {
+    selectedMonth.value = 11;
+    selectedYear.value--;
+  } else {
+    selectedMonth.value--;
+  }
+  updateWorkTimes();
+}
+
+function goToNextMonth() {
+  if (selectedMonth.value === 11) {
+    selectedMonth.value = 0;
+    selectedYear.value++;
+  } else {
+    selectedMonth.value++;
+  }
+  updateWorkTimes();
+}
+
 </script>
 
 
@@ -212,6 +234,15 @@ const totalHours = computed(() => {
   <div v-if="selectedUserForWorkTimes">
     <p><strong>{{ selectedUserForWorkTimes.vorname }} {{ selectedUserForWorkTimes.nachname }}</strong></p>
     <p>Geleistete Stunden im {{ new Date().toLocaleString('de-DE', { month: 'long' }) }}: {{ totalHours }} Stunden</p>
+    <div class="zeiterfassung-month-controls">
+  <button @click="goToPreviousMonth" class="zeiterfassung-month-button">←</button>
+  <span class="zeiterfassung-month">
+    {{ new Date(selectedYear, selectedMonth).toLocaleString('de-DE', { month: 'long', year: 'numeric' }) }}
+  </span>
+  <button @click="goToNextMonth" class="zeiterfassung-month-button">→</button>
+</div>
+
+
 
     <table v-if="workTimesThisMonth.length">
       <thead>
@@ -526,5 +557,33 @@ td {
 .card .Zeiterfassung + div table tr:hover {
   background-color: #f5f0e4;
   transition: background-color 0.2s ease;
+}
+/* Monatsschaltung & Anzeige */
+.zeiterfassung-month-controls {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.zeiterfassung-month {
+  font-weight: bold;
+  font-size: 1.1rem;
+  color: #333;
+}
+
+.zeiterfassung-month-button {
+  background-color: #f1ecdb;
+  border: 1px solid #d8d2be;
+  padding: 0.3rem 0.7rem;
+  font-size: 1rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.zeiterfassung-month-button:hover {
+  background-color: #e9e2cf;
+  transform: scale(1.05);
 }
 </style>

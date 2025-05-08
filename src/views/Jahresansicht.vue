@@ -323,6 +323,7 @@ header h1 {
   text-align: center;
   font-size: 1rem;
   max-width: 600px;
+  font-weight: bold;
 }
 
 .progress-bar-container {

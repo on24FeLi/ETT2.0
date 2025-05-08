@@ -193,6 +193,7 @@ function isUrlaubstag(day) {
   border-radius: 12px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   padding: 1rem;
+  font-weight: bold;
 }
 
 
@@ -227,9 +228,9 @@ function isUrlaubstag(day) {
 }
 
 .calendar-days div {
-  font-weight: bold;
+  font-weight: lighter;
   padding: 0.5rem 0;
-  color: #555;
+  color: black;
 }
 
 .calendar-dates div {

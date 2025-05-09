@@ -569,9 +569,10 @@ td {
 }
 
 .card .Zeiterfassung + div p {
-  font-size: 1.1rem;
+  font-size: 24px;
   margin: 0.3rem 0;
   color: #444;
+  font-weight: bold;
 }
 
 .card .Zeiterfassung + div table {

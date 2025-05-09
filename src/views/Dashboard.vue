@@ -267,48 +267,55 @@ function goToNextMonth() {
 
     <!-- RECHTE SPALTE -->
     <div class="right-column">
-      <!-- Zeiterfassung -->
-      <div class="card zeiterfassung-box">
-        <div class="Zeiterfassung">Zeiterfassung</div>
+   <!-- Zeiterfassung -->
+<div class="card zeiterfassung-box">
+  <div class="Zeiterfassung">Zeiterfassung</div>
 
-        <div v-if="selectedUserForWorkTimes">
-          <p><strong>{{ selectedUserForWorkTimes.vorname }} {{ selectedUserForWorkTimes.nachname }}</strong></p>
-          <p>Geleistete Stunden im {{ new Date().toLocaleString('de-DE', { month: 'long' }) }}: {{ totalHours }} Stunden</p>
+  <div v-if="selectedUserForWorkTimes">
+    <p><strong>{{ selectedUserForWorkTimes.vorname }} {{ selectedUserForWorkTimes.nachname }}</strong></p>
+    <p>Geleistete Stunden im {{ new Date().toLocaleString('de-DE', { month: 'long' }) }}: {{ totalHours }} Stunden</p>
 
-          <div class="zeiterfassung-month-controls">
-            <button @click="goToPreviousMonth" class="zeiterfassung-month-button">←</button>
-            <span class="zeiterfassung-month">
-              {{ new Date(selectedYear, selectedMonth).toLocaleString('de-DE', { month: 'long', year: 'numeric' }) }}
-            </span>
-            <button @click="goToNextMonth" class="zeiterfassung-month-button">→</button>
-          </div>
+    <div class="zeiterfassung-month-controls">
+      <button @click="goToPreviousMonth" class="zeiterfassung-month-button">←</button>
+      <span class="zeiterfassung-month">
+        {{ new Date(selectedYear, selectedMonth).toLocaleString('de-DE', { month: 'long', year: 'numeric' }) }}
+      </span>
+      <button @click="goToNextMonth" class="zeiterfassung-month-button">→</button>
+    </div>
 
-          <table v-if="workTimesThisMonth.length">
-            <thead>
-              <tr>
-                <th>Tag</th>
-                <th>Datum</th>
-                <th>Beginn</th>
-                <th>Ende</th>
-                <th>Arbeitszeit</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="(entry, index) in workTimesThisMonth" :key="index">
-                <td>{{ getWeekday(entry.date) }}</td>
-                <td>{{ new Date(entry.date).toLocaleDateString() }}</td>
-                <td>{{ entry.start }}</td>
-                <td>{{ entry.end }}</td>
-                <td>{{ Number(entry.workinghours).toFixed(2) }}</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        <div v-else>
-          <p>Bitte einen Mitarbeiter auswählen.</p>
-        </div>
-      </div>
+   <!-- Fixierter Tabellenkopf -->
+<table class="worktime-table-header" v-if="workTimesThisMonth.length">
+  <thead>
+    <tr>
+      <th>Tag</th>
+      <th>Datum</th>
+      <th>Beginn</th>
+      <th>Ende</th>
+      <th>Arbeitszeit</th>
+    </tr>
+  </thead>
+</table>
 
+<!-- Scrollbarer Tabellenkörper -->
+<div class="worktime-table-wrapper" v-if="workTimesThisMonth.length">
+  <table class="worktime-table-body">
+    <tbody>
+      <tr v-for="(entry, index) in workTimesThisMonth" :key="index">
+        <td>{{ getWeekday(entry.date) }}</td>
+        <td>{{ new Date(entry.date).toLocaleDateString() }}</td>
+        <td>{{ entry.start }}</td>
+        <td>{{ entry.end }}</td>
+        <td>{{ Number(entry.workinghours).toFixed(2) }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+  </div>
+  <div v-else>
+    <p>Bitte einen Mitarbeiter auswählen.</p>
+  </div>
+</div>
       <!-- Urlaub -->
       <div class="card urlaub-box">
         <div class="Urlaub">Urlaub</div>
@@ -666,6 +673,82 @@ td {
 }
 
 .urlaub-box table tr:hover {
+  background-color: #f5f0e4;
+  transition: background-color 0.2s ease;
+}
+.worktime-table-wrapper {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.worktime-table-wrapper table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+/* Fixierter Tabellenkopf */
+.worktime-table-wrapper thead {
+  position: sticky;
+  top: 0;
+  background-color: #f1ecdb;
+  z-index: 1;
+}
+
+/* Optional: Zeilen-Styling */
+.worktime-table-wrapper tr:nth-child(even) {
+  background-color: #fdfbf5;
+}
+
+.worktime-table-wrapper tr:hover {
+  background-color: #f5f0e4;
+  transition: background-color 0.2s ease;
+}
+
+.worktime-table-wrapper th,
+.worktime-table-wrapper td {
+  padding: 0.75rem 1rem;
+  border: 1px solid #e0dccc;
+  text-align: left;
+}
+.worktime-table-header {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.worktime-table-header th {
+  background-color: #f1ecdb;
+  padding: 0.75rem 1rem;
+  border: 1px solid #e0dccc;
+  text-align: left;
+  font-weight: 600;
+}
+
+.worktime-table-wrapper {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.worktime-table-body {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  font-size: 0.95rem;
+  background-color: #fff;
+}
+
+.worktime-table-body td {
+  padding: 0.75rem 1rem;
+  border: 1px solid #e0dccc;
+  text-align: left;
+}
+
+.worktime-table-body tr:nth-child(even) {
+  background-color: #fdfbf5;
+}
+
+.worktime-table-body tr:hover {
   background-color: #f5f0e4;
   transition: background-color 0.2s ease;
 }

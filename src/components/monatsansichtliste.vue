@@ -121,7 +121,7 @@ const reloadWorkTimes = () => {
         </div>
         <p v-if="monthlyOvertime > 0">Überstunden: +{{ monthlyOvertime.toFixed(2) }} Stunden</p>
         <p v-else>Verbleibende Stunden: {{ monthlyRemaining.toFixed(2) }} Stunden</p> 
-       <p v-else>Keine Einträge für diesen Monat.</p>
+      
       </div>
       <div class="table-wrapper" v-if="workTimes.length">
   <table class="scroll-table">

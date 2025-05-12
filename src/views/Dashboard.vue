@@ -190,80 +190,84 @@ function goToNextMonth() {
     <!-- LINKE SPALTE -->
     <div class="left-column">
       <!-- Aktive Mitarbeiter -->
-      <div class="card employee-list">
-        <div class="section-title">
-          <span>Aktive Mitarbeiter</span>
-          <button class="add-btn" @click="toggleForm">{{ showForm ? "×" : "+" }}</button>
-        </div>
+<div class="card employee-list">
+  <div class="section-title">
+    <span>Aktive Mitarbeiter</span>
+    <button class="add-btn" @click="toggleForm">{{ showForm ? "×" : "+" }}</button>
+  </div>
 
-        <table>
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Vorname</th>
-              <th>E-Mail</th>
-              <th>Arbeitszeit</th>
-              <th>HR</th>
-              <th>Aktionen</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="user in activeUsers" :key="user.id">
-              <td @click="selectUser(user)" style="cursor: pointer;">{{ user.nachname }}</td>
-              <td>{{ user.vorname }}</td>
-              <td>{{ user.email }}</td>
-              <td>{{ user.arbeitszeitTyp }}</td>
-              <td>{{ user.isHR ? "Ja" : "Nein" }}</td>
-              <td id="icons">
-                <button @click="editUserFromStorage(user)">
-                  <img src="/public/edit.png" alt="Edit" />
-                </button>
-                <button @click="archiveUser(user)">
-                  <img src="/public/archive.png" alt="Archivieren" />
-                </button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+  <div class="employee-table-wrapper">
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Vorname</th>
+          <th>E-Mail</th>
+          <th>Arbeitszeit</th>
+          <th>HR</th>
+          <th>Aktionen</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="user in activeUsers" :key="user.id">
+          <td @click="selectUser(user)" style="cursor: pointer;">{{ user.nachname }}</td>
+          <td>{{ user.vorname }}</td>
+          <td>{{ user.email }}</td>
+          <td>{{ user.arbeitszeitTyp }}</td>
+          <td>{{ user.isHR ? "Ja" : "Nein" }}</td>
+          <td id="icons">
+            <button @click="editUserFromStorage(user)">
+              <img src="/public/edit.png" alt="Edit" />
+            </button>
+            <button @click="archiveUser(user)">
+              <img src="/public/archive.png" alt="Archivieren" />
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
 
-      <!-- Archivierte Mitarbeiter -->
-      <div class="card employee-list archived-list">
-        <div class="section-title">
-          <span>Archivierte Mitarbeiter</span>
-        </div>
+<!-- Archivierte Mitarbeiter -->
+<div class="card employee-list archived-list">
+  <div class="section-title">
+    <span>Archivierte Mitarbeiter</span>
+  </div>
 
-        <table>
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Vorname</th>
-              <th>E-Mail</th>
-              <th>Arbeitszeit</th>
-              <th>HR</th>
-              <th>Aktionen</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="user in archivedUsers" :key="user.id">
-              <td>{{ user.nachname }}</td>
-              <td>{{ user.vorname }}</td>
-              <td>{{ user.email }}</td>
-              <td>{{ user.arbeitszeitTyp }}</td>
-              <td>{{ user.isHR ? "Ja" : "Nein" }}</td>
-              <td id="icons">
-                <button @click="restoreUser(user)">
-                  <img src="/public/unarchive.png" alt="Wiederherstellen" />
-                </button>
-                <button @click="deleteUserCompletely(user)">
-                  <img src="/public/delete.png" alt="Löschen" />
-                </button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
+  <div class="employee-table-wrapper">
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Vorname</th>
+          <th>E-Mail</th>
+          <th>Arbeitszeit</th>
+          <th>HR</th>
+          <th>Aktionen</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="user in archivedUsers" :key="user.id">
+          <td>{{ user.nachname }}</td>
+          <td>{{ user.vorname }}</td>
+          <td>{{ user.email }}</td>
+          <td>{{ user.arbeitszeitTyp }}</td>
+          <td>{{ user.isHR ? "Ja" : "Nein" }}</td>
+          <td id="icons">
+            <button @click="restoreUser(user)">
+              <img src="/public/unarchive.png" alt="Wiederherstellen" />
+            </button>
+            <button @click="deleteUserCompletely(user)">
+              <img src="/public/delete.png" alt="Löschen" />
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+</div>
 
     <!-- RECHTE SPALTE -->
     <div class="right-column">
@@ -272,7 +276,7 @@ function goToNextMonth() {
   <div class="Zeiterfassung">Zeiterfassung</div>
 
   <div v-if="selectedUserForWorkTimes">
-    <p><strong>{{ selectedUserForWorkTimes.vorname }} {{ selectedUserForWorkTimes.nachname }}</strong></p>
+    <p>Name: <strong>{{ selectedUserForWorkTimes.vorname }} {{ selectedUserForWorkTimes.nachname }}</strong></p>
     <p>Geleistete Stunden im {{ new Date().toLocaleString('de-DE', { month: 'long' }) }}: {{ totalHours }} Stunden</p>
 
     <div class="zeiterfassung-month-controls">
@@ -385,6 +389,7 @@ body {
   margin: 0;
   padding: 0;
   background-color: #fff;
+  overflow-x: hidden; /* verhindert horizontales Scrollen */
 }
 
 header {
@@ -417,14 +422,14 @@ header h1 {
   align-items: flex-start;
   flex-wrap: wrap;
   padding: 2rem;
+  overflow-x: hidden; /* verhindert horizontales Scrollen */
 }
 
 .left-column {
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  width: 600px;
-}
+  }
 
 .right-column {
   flex: 1;
@@ -439,6 +444,8 @@ header h1 {
   padding: 1rem;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
   background-color: #fff;
+  max-width: 100%;
+  overflow-x: hidden; /* verhindert horizontales Scrollen */
 }
 
 /* Tabellen */
@@ -468,22 +475,9 @@ td {
   cursor: pointer;
 }
 
-/* Scrollbegrenzung */
-.employee-list {
-  max-height: 274px;
-  width: 600px;
-  overflow-y: auto;
-  overflow-x: hidden;
-}
-
-.archived-list {
-  max-height: 200px;
-  overflow-y: auto;
-}
-
 /* Aktionen / Icons */
 #icons {
-  background-color: lightgrey;
+  background-color: #f1ecdb;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -563,16 +557,14 @@ td {
 /* Zeiterfassung */
 .Zeiterfassung {
   font-size: 1.5rem;
-  font-weight: bold;
   margin-bottom: 1rem;
   color: #333;
 }
 
 .card .Zeiterfassung + div p {
-  font-size: 24px;
+  font-size: 18px;
   margin: 0.3rem 0;
   color: #444;
-  font-weight: bold;
 }
 
 .card .Zeiterfassung + div table {
@@ -638,7 +630,6 @@ td {
 /* Urlaub */
 .urlaub-box {
   font-size: 1.5rem;
-  font-weight: bold;
   color: #333;
 }
 
@@ -677,6 +668,8 @@ td {
   background-color: #f5f0e4;
   transition: background-color 0.2s ease;
 }
+
+/* Worktime Tabelle */
 .worktime-table-wrapper {
   max-height: 300px;
   overflow-y: auto;
@@ -688,7 +681,6 @@ td {
   table-layout: fixed;
 }
 
-/* Fixierter Tabellenkopf */
 .worktime-table-wrapper thead {
   position: sticky;
   top: 0;
@@ -696,7 +688,6 @@ td {
   z-index: 1;
 }
 
-/* Optional: Zeilen-Styling */
 .worktime-table-wrapper tr:nth-child(even) {
   background-color: #fdfbf5;
 }
@@ -712,45 +703,59 @@ td {
   border: 1px solid #e0dccc;
   text-align: left;
 }
-.worktime-table-header {
-  width: 100%;
-  border-collapse: collapse;
-  table-layout: fixed;
-}
 
-.worktime-table-header th {
-  background-color: #f1ecdb;
-  padding: 0.75rem 1rem;
-  border: 1px solid #e0dccc;
-  text-align: left;
-  font-weight: 600;
-}
-
-.worktime-table-wrapper {
-  max-height: 300px;
+/* Mitarbeiter Tabellen */
+.employee-table-wrapper {
+  max-height: 250px;
   overflow-y: auto;
+  border: 1px solid #e0dccc; /* äußere Umrandung */
+  border-radius: 0.5rem;
 }
 
-.worktime-table-body {
+.employee-table-wrapper table {
   width: 100%;
-  border-collapse: collapse;
-  table-layout: fixed;
-  font-size: 0.95rem;
+  border-collapse: separate;
+  border-spacing: 0;
   background-color: #fff;
 }
 
-.worktime-table-body td {
+.employee-table-wrapper thead {
+  position: sticky;
+  top: 0;
+  background-color: #f1ecdb;
+  z-index: 1;
+}
+
+.employee-table-wrapper th,
+.employee-table-wrapper td {
   padding: 0.75rem 1rem;
   border: 1px solid #e0dccc;
   text-align: left;
+  font-weight: 400;
 }
 
-.worktime-table-body tr:nth-child(even) {
+/* Fette Schrift im Header */
+.employee-table-wrapper th {
+  font-weight: 600;
+}
+
+/* Zeilenfarben */
+.employee-table-wrapper tr:nth-child(even) {
   background-color: #fdfbf5;
 }
 
-.worktime-table-body tr:hover {
+.employee-table-wrapper tr:hover {
   background-color: #f5f0e4;
   transition: background-color 0.2s ease;
 }
+
+/* NUR Email-Spalte nicht umbrechen + abschneiden */
+.employee-table-wrapper td:nth-child(3),
+.employee-table-wrapper th:nth-child(3) {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 200px;
+}
+
 </style>

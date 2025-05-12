@@ -216,11 +216,11 @@ function goToNextMonth() {
           <td>{{ user.arbeitszeitTyp }}</td>
           <td>{{ user.isHR ? "Ja" : "Nein" }}</td>
           <td id="icons">
-            <button @click="editUserFromStorage(user)">
-              <img src="/public/edit.png" alt="Edit" />
+            <button @click="editUserFromStorage(user)" data-tooltip="Bearbeiten">
+              <img src="/public/edit.png" alt="Edit"/>
             </button>
-            <button @click="archiveUser(user)">
-              <img src="/public/archive.png" alt="Archivieren" />
+            <button @click="archiveUser(user)" data-tooltip="Archivieren">
+              <img src="/public/archive.png" alt="Archivieren"/>
             </button>
           </td>
         </tr>
@@ -255,11 +255,11 @@ function goToNextMonth() {
           <td>{{ user.arbeitszeitTyp }}</td>
           <td>{{ user.isHR ? "Ja" : "Nein" }}</td>
           <td id="icons">
-            <button @click="restoreUser(user)">
-              <img src="/public/unarchive.png" alt="Wiederherstellen" />
+            <button @click="restoreUser(user)" data-tooltip="Wiederherstellen">
+              <img src="/public/unarchive.png" alt="Wiederherstellen"/>
             </button>
-            <button @click="deleteUserCompletely(user)">
-              <img src="/public/delete.png" alt="Löschen" />
+            <button @click="deleteUserCompletely(user)" data-tooltip="Löschen">
+              <img src="/public/delete.png" alt="Löschen"/>
             </button>
           </td>
         </tr>
@@ -287,39 +287,36 @@ function goToNextMonth() {
       <button @click="goToNextMonth" class="zeiterfassung-month-button">→</button>
     </div>
 
-   <!-- Fixierter Tabellenkopf -->
-<table class="worktime-table-header" v-if="workTimesThisMonth.length">
-  <thead>
-    <tr>
-      <th>Tag</th>
-      <th>Datum</th>
-      <th>Beginn</th>
-      <th>Ende</th>
-      <th>Arbeitszeit</th>
-    </tr>
-  </thead>
-</table>
-
-<!-- Scrollbarer Tabellenkörper -->
-<div class="worktime-table-wrapper" v-if="workTimesThisMonth.length">
-  <table class="worktime-table-body">
-    <tbody>
-      <tr v-for="(entry, index) in workTimesThisMonth" :key="index">
-        <td>{{ getWeekday(entry.date) }}</td>
-        <td>{{ new Date(entry.date).toLocaleDateString() }}</td>
-        <td>{{ entry.start }}</td>
-        <td>{{ entry.end }}</td>
-        <td>{{ Number(entry.workinghours).toFixed(2) }}</td>
-      </tr>
-    </tbody>
-  </table>
-</div>
-
+    <!-- EINZIGE Tabelle wie bei employee-table -->
+    <div class="worktime-table-wrapper" v-if="workTimesThisMonth.length">
+      <table>
+        <thead>
+          <tr>
+            <th>Tag</th>
+            <th>Datum</th>
+            <th>Beginn</th>
+            <th>Ende</th>
+            <th>Arbeitszeit</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="(entry, index) in workTimesThisMonth" :key="index">
+            <td>{{ getWeekday(entry.date) }}</td>
+            <td>{{ new Date(entry.date).toLocaleDateString() }}</td>
+            <td>{{ entry.start }}</td>
+            <td>{{ entry.end }}</td>
+            <td>{{ Number(entry.workinghours).toFixed(2) }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
+  
   <div v-else>
     <p>Bitte einen Mitarbeiter auswählen.</p>
   </div>
 </div>
+
       <!-- Urlaub -->
       <div class="card urlaub-box">
         <div class="Urlaub">Urlaub</div>
@@ -483,12 +480,15 @@ td {
   align-items: center;
   padding: 5px;
   gap: 15px;
+  height: 35px; /* NEU → verhindert weißen Rest */
 }
 
 #icons img {
   width: 25px;
   height: 25px;
-  padding-left: 7px;
+  display: block; /* NEU → entfernt Text-line gap */
+  padding: 0;     /* NEU → entfernt dein padding-left: 7px */
+  margin: 0;
 }
 
 #icons button {
@@ -496,6 +496,30 @@ td {
   border: none;
   cursor: pointer;
   padding: 0;
+}
+button[data-tooltip] {
+  position: relative;
+}
+
+button[data-tooltip]::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: 125%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #333;
+  color: #fff;
+  padding: 5px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s;
+}
+
+button[data-tooltip]:hover::after {
+  opacity: 1;
 }
 
 /* Formular-Popup */
@@ -577,26 +601,43 @@ td {
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
 }
 
-.card .Zeiterfassung + div table th,
-.card .Zeiterfassung + div table td {
+.worktime-table-wrapper {
+  max-height: 300px;
+  overflow-y: auto;
+  border: 1px solid #e0dccc;
+  border-radius: 0.5rem;
+}
+
+.worktime-table-wrapper table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  background-color: #fff;
+}
+
+.worktime-table-wrapper thead {
+  position: sticky;
+  top: 0;
+  background-color: #f1ecdb;
+  z-index: 1;
+}
+
+.worktime-table-wrapper th,
+.worktime-table-wrapper td {
   padding: 0.75rem 1rem;
   border: 1px solid #e0dccc;
   text-align: left;
 }
 
-.card .Zeiterfassung + div table th {
-  background-color: #f1ecdb;
-  font-weight: 600;
-}
-
-.card .Zeiterfassung + div table tr:nth-child(even) {
+.worktime-table-wrapper tr:nth-child(even) {
   background-color: #fdfbf5;
 }
 
-.card .Zeiterfassung + div table tr:hover {
+.worktime-table-wrapper tr:hover {
   background-color: #f5f0e4;
   transition: background-color 0.2s ease;
 }
+
 
 /* Monatsschaltung */
 .zeiterfassung-month-controls {
@@ -757,5 +798,4 @@ td {
   text-overflow: ellipsis;
   max-width: 200px;
 }
-
 </style>

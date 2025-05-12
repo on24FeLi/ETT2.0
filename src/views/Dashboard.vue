@@ -4,6 +4,7 @@ import navigation from "@/components/navigation.vue";
 import { users, addUser, deleteUser, updateUser } from "@/utils/storageTest";
 import { deleteWorkTimesByUser } from "@/utils/Arbeitszeiten";
 import { getWorkTimesByUser } from "@/utils/Arbeitszeiten";
+import { getUrlaubeByUser } from "@/utils/Urlaubszeiten";
 
 const editingUser = ref(null);
 const showForm = ref(false);
@@ -11,7 +12,7 @@ const selectedUserForWorkTimes = ref(null);
 const workTimesThisMonth = ref([]);
 const selectedMonth = ref(new Date().getMonth());
 const selectedYear = ref(new Date().getFullYear());
-
+const urlaubeForSelectedUser = ref([]);
 
 const form = ref({
   nachname: "",
@@ -126,10 +127,9 @@ function deleteUserCompletely(user) {
 
 function selectUser(user) {
   selectedUserForWorkTimes.value = user;
-  updateWorkTimes(); // statt direkter Filterung
+  updateWorkTimes();
+  updateUrlaube(); // HIER ergänzt
 }
-
-
 // Hilfsfunktion für Wochentag
 function getWeekday(dateString) {
   const days = ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"];
@@ -156,6 +156,10 @@ function updateWorkTimes() {
     })
     .sort((a, b) => new Date(a.date) - new Date(b.date));
 }
+function updateUrlaube() {
+  if (!selectedUserForWorkTimes.value) return;
+  urlaubeForSelectedUser.value = getUrlaubeByUser(selectedUserForWorkTimes.value.id);
+}
 function goToPreviousMonth() {
   if (selectedMonth.value === 0) {
     selectedMonth.value = 11;
@@ -175,18 +179,16 @@ function goToNextMonth() {
   }
   updateWorkTimes();
 }
-
 </script>
-
-
 <template>
-    <header>
-      <h1>Dashboard</h1>
-      <navigation></navigation>
-    </header>
+  <header>
+    <h1>Dashboard</h1>
+    <navigation></navigation>
+  </header>
 
-    <div class="dashboard-container">
-
+  <div class="dashboard-container">
+    <!-- LINKE SPALTE -->
+    <div class="left-column">
       <!-- Aktive Mitarbeiter -->
       <div class="card employee-list">
         <div class="section-title">
@@ -207,8 +209,7 @@ function goToNextMonth() {
           </thead>
           <tbody>
             <tr v-for="user in activeUsers" :key="user.id">
-              <td @click="selectUser(user)" style="cursor: pointer;"> {{ user.nachname }} </td>
-
+              <td @click="selectUser(user)" style="cursor: pointer;">{{ user.nachname }}</td>
               <td>{{ user.vorname }}</td>
               <td>{{ user.email }}</td>
               <td>{{ user.arbeitszeitTyp }}</td>
@@ -226,125 +227,158 @@ function goToNextMonth() {
         </table>
       </div>
 
-<!-- Zeiterfassung -->
-<div class="card" style="flex: 2">
+      <!-- Archivierte Mitarbeiter -->
+      <div class="card employee-list archived-list">
+        <div class="section-title">
+          <span>Archivierte Mitarbeiter</span>
+        </div>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Vorname</th>
+              <th>E-Mail</th>
+              <th>Arbeitszeit</th>
+              <th>HR</th>
+              <th>Aktionen</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="user in archivedUsers" :key="user.id">
+              <td>{{ user.nachname }}</td>
+              <td>{{ user.vorname }}</td>
+              <td>{{ user.email }}</td>
+              <td>{{ user.arbeitszeitTyp }}</td>
+              <td>{{ user.isHR ? "Ja" : "Nein" }}</td>
+              <td id="icons">
+                <button @click="restoreUser(user)">
+                  <img src="/public/unarchive.png" alt="Wiederherstellen" />
+                </button>
+                <button @click="deleteUserCompletely(user)">
+                  <img src="/public/delete.png" alt="Löschen" />
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- RECHTE SPALTE -->
+    <div class="right-column">
+   <!-- Zeiterfassung -->
+<div class="card zeiterfassung-box">
   <div class="Zeiterfassung">Zeiterfassung</div>
 
   <div v-if="selectedUserForWorkTimes">
     <p><strong>{{ selectedUserForWorkTimes.vorname }} {{ selectedUserForWorkTimes.nachname }}</strong></p>
     <p>Geleistete Stunden im {{ new Date().toLocaleString('de-DE', { month: 'long' }) }}: {{ totalHours }} Stunden</p>
+
     <div class="zeiterfassung-month-controls">
-  <button @click="goToPreviousMonth" class="zeiterfassung-month-button">←</button>
-  <span class="zeiterfassung-month">
-    {{ new Date(selectedYear, selectedMonth).toLocaleString('de-DE', { month: 'long', year: 'numeric' }) }}
-  </span>
-  <button @click="goToNextMonth" class="zeiterfassung-month-button">→</button>
+      <button @click="goToPreviousMonth" class="zeiterfassung-month-button">←</button>
+      <span class="zeiterfassung-month">
+        {{ new Date(selectedYear, selectedMonth).toLocaleString('de-DE', { month: 'long', year: 'numeric' }) }}
+      </span>
+      <button @click="goToNextMonth" class="zeiterfassung-month-button">→</button>
+    </div>
+
+   <!-- Fixierter Tabellenkopf -->
+<table class="worktime-table-header" v-if="workTimesThisMonth.length">
+  <thead>
+    <tr>
+      <th>Tag</th>
+      <th>Datum</th>
+      <th>Beginn</th>
+      <th>Ende</th>
+      <th>Arbeitszeit</th>
+    </tr>
+  </thead>
+</table>
+
+<!-- Scrollbarer Tabellenkörper -->
+<div class="worktime-table-wrapper" v-if="workTimesThisMonth.length">
+  <table class="worktime-table-body">
+    <tbody>
+      <tr v-for="(entry, index) in workTimesThisMonth" :key="index">
+        <td>{{ getWeekday(entry.date) }}</td>
+        <td>{{ new Date(entry.date).toLocaleDateString() }}</td>
+        <td>{{ entry.start }}</td>
+        <td>{{ entry.end }}</td>
+        <td>{{ Number(entry.workinghours).toFixed(2) }}</td>
+      </tr>
+    </tbody>
+  </table>
 </div>
 
-
-
-    <table v-if="workTimesThisMonth.length">
-      <thead>
-        <tr>
-          <th>Tag</th>
-          <th>Datum</th>
-          <th>Beginn</th>
-          <th>Ende</th>
-          <th>Arbeitszeit</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="(entry, index) in workTimesThisMonth" :key="index">
-          <td>{{ getWeekday(entry.date) }}</td>
-          <td>{{ new Date(entry.date).toLocaleDateString() }}</td>
-          <td>{{ entry.start }}</td>
-          <td>{{ entry.end }}</td>
-          <td>{{ Number(entry.workinghours).toFixed(2) }}</td>
-        </tr>
-      </tbody>
-    </table>
   </div>
   <div v-else>
     <p>Bitte einen Mitarbeiter auswählen.</p>
   </div>
 </div>
+      <!-- Urlaub -->
+      <div class="card urlaub-box">
+        <div class="Urlaub">Urlaub</div>
 
-      </div>
+        <div v-if="selectedUserForWorkTimes">
 
-<div class="bottom-container">
-  <!-- Archivierte Mitarbeiter -->
-  <div class="card employee-list archived-list">
-    <div class="section-title">
-      <span>Archivierte Mitarbeiter</span>
-    </div>
+          <table v-if="urlaubeForSelectedUser.length">
+            <thead>
+              <tr>
+                <th>Von</th>
+                <th>Bis</th>
+                <th>Tage</th>
+                <th>Kommentar</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="urlaub in urlaubeForSelectedUser" :key="urlaub.id">
+                <td>{{ new Date(urlaub.start).toLocaleDateString() }}</td>
+                <td>{{ new Date(urlaub.end).toLocaleDateString() }}</td>
+                <td>{{ urlaub.tage }}</td>
+                <td>{{ urlaub.kommentar }}</td>
+              </tr>
+            </tbody>
+          </table>
 
-    <table>
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Vorname</th>
-          <th>E-Mail</th>
-          <th>Arbeitszeit</th>
-          <th>HR</th>
-          <th>Aktionen</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="user in archivedUsers" :key="user.id">
-          <td>{{ user.nachname }}</td>
-          <td>{{ user.vorname }}</td>
-          <td>{{ user.email }}</td>
-          <td>{{ user.arbeitszeitTyp }}</td>
-          <td>{{ user.isHR ? "Ja" : "Nein" }}</td>
-          <td id="icons">
-            <button @click="restoreUser(user)">
-              <img src="/public/unarchive.png" alt="Wiederherstellen" />
-            </button>
-            <button @click="deleteUserCompletely(user)">
-              <img src="/public/delete.png" alt="Löschen" />
-            </button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-
-  <!-- Urlaub -->
-  <div class="card urlaub-box">
-    <div class="Urlaub">Urlaub</div>
-  </div>
-</div>
-
-    <!-- FORMULAR-OVERLAY -->
-    <div class="overlay" v-if="showForm">
-      <div class="form-popup">
-        <button class="close-btn" @click="toggleForm">×</button>
-        <h2>{{ editingUser ? "Mitarbeiter bearbeiten" : "Neuen Mitarbeiter hinzufügen" }}</h2>
-        <input type="text" v-model="form.nachname" placeholder="Name" required />
-        <input type="text" v-model="form.vorname" placeholder="Vorname" required />
-        <input type="email" v-model="form.email" placeholder="E-Mail" required />
-        <input type="password" v-model="form.password" placeholder="Passwort" required />
-
-        <label class="checkbox">
-          <input type="checkbox" v-model="form.isHR" />
-          Gehört zur HR-Abteilung
-        </label>
-
-        <label class="checkbox">
-          Arbeitszeit:
-          <select v-model="form.arbeitszeitTyp">
-            <option value="Vollzeit">Vollzeit</option>
-            <option value="Teilzeit">Teilzeit</option>
-          </select>
-        </label>
-
-        <div class="form-buttons right">
-          <button @click="submitForm">{{ editingUser ? "Speichern" : "Hinzufügen" }}</button>
+          <p v-else>Kein Urlaub gebucht.</p>
+        </div>
+        <div v-else>
+          <p>Bitte einen Mitarbeiter auswählen.</p>
         </div>
       </div>
     </div>
-</template>
+  </div>
 
+  <!-- FORMULAR-OVERLAY -->
+  <div class="overlay" v-if="showForm">
+    <div class="form-popup">
+      <button class="close-btn" @click="toggleForm">×</button>
+      <h2>{{ editingUser ? "Mitarbeiter bearbeiten" : "Neuen Mitarbeiter hinzufügen" }}</h2>
+      <input type="text" v-model="form.nachname" placeholder="Name" required />
+      <input type="text" v-model="form.vorname" placeholder="Vorname" required />
+      <input type="email" v-model="form.email" placeholder="E-Mail" required />
+      <input type="password" v-model="form.password" placeholder="Passwort" required />
+
+      <label class="checkbox">
+        <input type="checkbox" v-model="form.isHR" />
+        Gehört zur HR-Abteilung
+      </label>
+
+      <label class="checkbox">
+        Arbeitszeit:
+        <select v-model="form.arbeitszeitTyp">
+          <option value="Vollzeit">Vollzeit</option>
+          <option value="Teilzeit">Teilzeit</option>
+        </select>
+      </label>
+
+      <div class="form-buttons right">
+        <button @click="submitForm">{{ editingUser ? "Speichern" : "Hinzufügen" }}</button>
+      </div>
+    </div>
+  </div>
+</template>
 <style scoped>
 body {
   font-family: sans-serif;
@@ -376,28 +410,38 @@ header h1 {
   gap: 0.5rem;
 }
 
+/* Layoutstruktur */
 .dashboard-container {
   display: flex;
+  gap: 2rem;
+  align-items: flex-start;
   flex-wrap: wrap;
-  gap: 1rem;
   padding: 2rem;
+}
+
+.left-column {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 600px;
+}
+
+.right-column {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-left: 1rem;
 }
 
 .card {
   border-radius: 1rem;
   padding: 1rem;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  background-color: #fff;
 }
 
-.employee-list {
-  flex: 0 1 400px;
-}
-.archived-list {
- padding-left: 12px;
- margin-left: 30px;
- padding-right: 12px;
-}
-
+/* Tabellen */
 table {
   width: 100%;
   border-collapse: collapse;
@@ -410,18 +454,6 @@ td {
   text-align: left;
 }
 
-.actions {
-  display: flex;
-  gap: 0.5rem;
-  justify-content: center;
-}
-
-.add-btn {
-  font-size: 1.5rem;
-  margin-left: 1rem;
-  cursor: pointer;
-}
-
 .section-title {
   font-size: 1.5rem;
   margin-bottom: 0.5rem;
@@ -430,8 +462,49 @@ td {
   align-items: center;
 }
 
-/* FORM OVERLAY */
+.add-btn {
+  font-size: 1.5rem;
+  margin-left: 1rem;
+  cursor: pointer;
+}
 
+/* Scrollbegrenzung */
+.employee-list {
+  max-height: 274px;
+  width: 600px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.archived-list {
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+/* Aktionen / Icons */
+#icons {
+  background-color: lightgrey;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 5px;
+  gap: 15px;
+}
+
+#icons img {
+  width: 25px;
+  height: 25px;
+  padding-left: 7px;
+}
+
+#icons button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+/* Formular-Popup */
 .overlay {
   position: fixed;
   top: 0;
@@ -487,32 +560,7 @@ td {
   cursor: pointer;
 }
 
-#icons img {
-  width: 25px;
-  height: 25px;
-  padding-left: 7px;
-}
-
-#icons button {
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0;
-}
-
-#icons {
-  background-color: lightgrey;
-  justify-content: center;
-  align-items: center;
-  padding: 5px;
-  gap: 15px; /* Abstand zwischen den Icons */
-}
-
-.edit {
-  border-right: 0;
-}
-/* ZEITERFASSUNG: angepasstes Styling für bestehenden HTML-Code */
-
+/* Zeiterfassung */
 .Zeiterfassung {
   font-size: 1.5rem;
   font-weight: bold;
@@ -521,9 +569,10 @@ td {
 }
 
 .card .Zeiterfassung + div p {
-  font-size: 1.1rem;
+  font-size: 24px;
   margin: 0.3rem 0;
   color: #444;
+  font-weight: bold;
 }
 
 .card .Zeiterfassung + div table {
@@ -556,7 +605,8 @@ td {
   background-color: #f5f0e4;
   transition: background-color 0.2s ease;
 }
-/* Monatsschaltung & Anzeige */
+
+/* Monatsschaltung */
 .zeiterfassung-month-controls {
   display: flex;
   align-items: center;
@@ -584,23 +634,123 @@ td {
   background-color: #e9e2cf;
   transform: scale(1.05);
 }
-.bottom-container {
-  display: flex;
-  flex-direction: row;
-  gap: 1rem;
-  width: 100%;
-  box-sizing: border-box;
-}
+
+/* Urlaub */
 .urlaub-box {
-  flex: 1;
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  margin-right: 30px;
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #333;
 }
 
 .urlaub-box .Urlaub {
   color: #333;
+}
+
+.urlaub-box table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+  background-color: #fff;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  margin-top: 1rem;
+}
+
+.urlaub-box table th,
+.urlaub-box table td {
+  padding: 0.75rem 1rem;
+  border: 1px solid #e0dccc;
+  text-align: left;
+}
+
+.urlaub-box table th {
+  background-color: #f1ecdb;
+  font-weight: 600;
+}
+
+.urlaub-box table tr:nth-child(even) {
+  background-color: #fdfbf5;
+}
+
+.urlaub-box table tr:hover {
+  background-color: #f5f0e4;
+  transition: background-color 0.2s ease;
+}
+.worktime-table-wrapper {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.worktime-table-wrapper table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+/* Fixierter Tabellenkopf */
+.worktime-table-wrapper thead {
+  position: sticky;
+  top: 0;
+  background-color: #f1ecdb;
+  z-index: 1;
+}
+
+/* Optional: Zeilen-Styling */
+.worktime-table-wrapper tr:nth-child(even) {
+  background-color: #fdfbf5;
+}
+
+.worktime-table-wrapper tr:hover {
+  background-color: #f5f0e4;
+  transition: background-color 0.2s ease;
+}
+
+.worktime-table-wrapper th,
+.worktime-table-wrapper td {
+  padding: 0.75rem 1rem;
+  border: 1px solid #e0dccc;
+  text-align: left;
+}
+.worktime-table-header {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.worktime-table-header th {
+  background-color: #f1ecdb;
+  padding: 0.75rem 1rem;
+  border: 1px solid #e0dccc;
+  text-align: left;
+  font-weight: 600;
+}
+
+.worktime-table-wrapper {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.worktime-table-body {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  font-size: 0.95rem;
+  background-color: #fff;
+}
+
+.worktime-table-body td {
+  padding: 0.75rem 1rem;
+  border: 1px solid #e0dccc;
+  text-align: left;
+}
+
+.worktime-table-body tr:nth-child(even) {
+  background-color: #fdfbf5;
+}
+
+.worktime-table-body tr:hover {
+  background-color: #f5f0e4;
+  transition: background-color 0.2s ease;
 }
 </style>

@@ -347,13 +347,13 @@ button:hover {
 .timer-box {
   background-color: #f2eddb;
   padding: 30px;
-  border: 2px solid lightgray;
   border-radius: 25px;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 5px;
   width: 450px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
 }
 .timer-box h2:first-of-type {
   font-size: 28px;

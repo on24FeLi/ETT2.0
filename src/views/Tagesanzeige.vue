@@ -24,6 +24,9 @@ function toggleTimer() {
   isRunning.value = !isRunning.value;
 
   if (isRunning.value) {
+    startTimestamp = new Date();
+  localStorage.setItem("timerRunning", "true");
+  localStorage.setItem("timerStart", startTimestamp.toISOString());
     const todayDate = new Date().toISOString().split("T")[0];
     const user = JSON.parse(localStorage.getItem("loggedInUser"));
     const existingEntries = JSON.parse(localStorage.getItem("workTimes")) || [];
@@ -40,7 +43,8 @@ function toggleTimer() {
     clearInterval(intervalId);
     intervalId = null;
     stopTimestamp = new Date();
-
+  localStorage.removeItem("timerRunning");
+  localStorage.removeItem("timerStart");
     saveWorkTime(); // Jetzt speichern
   }
 }
@@ -117,13 +121,27 @@ function saveWorkTime() {
   updateTodaysStoredHours();
 }
 onMounted(() => {
-  const userData = localStorage.getItem("loggedInUser");
-  if (userData) {
+   const userData = localStorage.getItem("loggedInUser");
+   if (userData) {
     const parsedUser = JSON.parse(userData);
     userName.value = `${parsedUser.vorname} ${parsedUser.nachname}`;
   }
   loadTodayTimes();
   updateTodaysStoredHours();
+  const running = localStorage.getItem("timerRunning");
+const startIso = localStorage.getItem("timerStart");
+ 
+  if (running === "true" && startIso) {
+  startTimestamp = new Date(startIso);
+  const now = new Date();
+  totalSeconds.value += Math.floor((now - startTimestamp) / 1000);
+
+  isRunning.value = true;
+  intervalId = setInterval(() => {
+    totalSeconds.value++;
+  }, 1000);
+}
+  
 });
 function loadTodayTimes() {
   const userData = localStorage.getItem("loggedInUser");
@@ -189,6 +207,7 @@ function updateTodaysStoredHours() {
   const totalMinutes = Math.round((todayEntry.workinghours % 1) * 60);
   todaysStoredHours.value = `${totalHours}h ${totalMinutes}min`;
 }
+
 </script>
 
 <template>

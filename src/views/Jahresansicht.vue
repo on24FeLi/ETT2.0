@@ -346,7 +346,6 @@ table.arbeitszeiten-tabelle {
   border-collapse: collapse;
   margin-top: 10px;
   font-size: 0.9rem;
-  border: 1px solid #e0dccc;
   border-radius: 10px;
   overflow: hidden;
 }

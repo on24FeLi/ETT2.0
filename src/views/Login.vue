@@ -26,15 +26,19 @@ onMounted(() => {
 
 function userLogin() {
   const user = users.find(
-    u => u.email === userName.value && u.passwort === passWord.value)
+    u => u.email === userName.value && u.passwort === passWord.value && !u.isArchived)
 
-  if (user) {
-    localStorage.setItem('loggedInUser', JSON.stringify(user))
-    loginError.value = ''
-    router.push('/tagesanzeige') // ← Routenpfad aus dem Router
-  } else {
-    loginError.value = 'Falsche E-Mail oder Passwort'
-  }
+ const foundUser = users.find(u => u.email === userName.value && u.passwort === passWord.value)
+
+if (!foundUser) {
+  loginError.value = 'Falsche E-Mail oder Passwort'
+} else if (foundUser.isArchived) {
+  loginError.value = 'Benutzer ist archiviert'
+} else {
+  localStorage.setItem('loggedInUser', JSON.stringify(foundUser))
+  loginError.value = ''
+  router.push('/tagesanzeige')
+}
 }
 </script>
 <template>

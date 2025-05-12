@@ -179,6 +179,14 @@ function goToNextMonth() {
   }
   updateWorkTimes();
 }
+const totalTakenLeave = computed(() => {
+  return urlaubeForSelectedUser.value.reduce((sum, urlaub) => sum + urlaub.tage, 0);
+});
+const annualLeaveEntitlement = 30;  // oder z.B. selectedUserForWorkTimes.value.urlaubstage
+
+const remainingLeave = computed(() => {
+  return Math.max(0, annualLeaveEntitlement - totalTakenLeave.value);
+});
 </script>
 <template>
   <header>
@@ -347,7 +355,13 @@ function goToNextMonth() {
         <div v-else>
           <p>Bitte einen Mitarbeiter auswählen.</p>
         </div>
+        <div v-if="selectedUserForWorkTimes && urlaubeForSelectedUser.length" class="leave-summary">
+  <strong>Jährlicher Anspruch:</strong> {{ annualLeaveEntitlement }} Tage<br>
+  <strong>Bisher genommen:</strong> {{ totalTakenLeave }} Tage<br>
+  <strong>Resturlaub:</strong> {{ remainingLeave }} Tage
+</div>
       </div>
+
     </div>
   </div>
 
@@ -442,7 +456,7 @@ header h1 {
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
   background-color: #fff;
   max-width: 100%;
-  overflow-x: hidden; /* verhindert horizontales Scrollen */
+  /*overflow-x: hidden; /*verhindert horizontales Scrollen */
 }
 
 /* Tabellen */
@@ -470,6 +484,9 @@ td {
   font-size: 1.5rem;
   margin-left: 1rem;
   cursor: pointer;
+  border: 1px solid lightgrey;
+    border-radius: 5px;
+    background-color: #f1ecdb;
 }
 
 /* Aktionen / Icons */
@@ -481,6 +498,7 @@ td {
   padding: 5px;
   gap: 15px;
   height: 35px; /* NEU → verhindert weißen Rest */
+  overflow: visible;
 }
 
 #icons img {
@@ -516,6 +534,7 @@ button[data-tooltip]::after {
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.2s;
+  z-index: 9999;
 }
 
 button[data-tooltip]:hover::after {
@@ -747,10 +766,13 @@ button[data-tooltip]:hover::after {
 
 /* Mitarbeiter Tabellen */
 .employee-table-wrapper {
-  max-height: 250px;
+  max-height: 300px;
   overflow-y: auto;
-  border: 1px solid #e0dccc; /* äußere Umrandung */
+  border: 1px solid #e0dccc;
+  overflow: visible;
   border-radius: 0.5rem;
+  position: relative;
+  position: sticky;
 }
 
 .employee-table-wrapper table {
@@ -758,13 +780,14 @@ button[data-tooltip]:hover::after {
   border-collapse: separate;
   border-spacing: 0;
   background-color: #fff;
+  border-radius: 0.5rem;
+  overflow: hidden;
 }
-
 .employee-table-wrapper thead {
   position: sticky;
   top: 0;
   background-color: #f1ecdb;
-  z-index: 1;
+  z-index: 2;
 }
 
 .employee-table-wrapper th,
@@ -797,5 +820,33 @@ button[data-tooltip]:hover::after {
   overflow: hidden;
   text-overflow: ellipsis;
   max-width: 200px;
+}
+.card.employee-list {
+    display: flex;
+    flex-direction: column;
+    max-height: 400px;            /* Gesamtgröße der Card */
+}
+
+.card.employee-list .section-title {
+    position: sticky;
+    top: 0;
+    background-color: #fff;
+    z-index: 3;
+    padding: 1rem;
+}
+
+.card.employee-list .employee-table-wrapper {
+    flex: 1;
+    overflow-y: auto;
+}
+
+
+.leave-summary {
+  padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+    margin-top: 1rem;
+    font-size: 18px;
+    color: #333;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
 }
 </style>

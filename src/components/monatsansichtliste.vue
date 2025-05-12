@@ -124,7 +124,7 @@ const reloadWorkTimes = () => {
       
       </div>
       <div class="table-wrapper" v-if="workTimes.length">
-  <table class="scroll-table">
+  <table>
     <thead>
       <tr>
         <th>Tag</th>
@@ -179,11 +179,11 @@ const reloadWorkTimes = () => {
   background-color: #90ac8f;
   transition: width 0.3s ease-in-out;
 }
+
 .monatsansicht-container {
   display: flex;
   flex-direction: column;
   align-items: center;
-  
 }
 
 .monatsansicht-navigation {
@@ -218,84 +218,47 @@ const reloadWorkTimes = () => {
   width: 100%;
 }
 
-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 0.95rem;
-  background-color: #fff;
-  border-radius: 0.5rem;
-  overflow: hidden;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
-}
-
-th,
-td {
-  padding: 0.75rem 1rem;
-  border: 1px solid #e0dccc;
-  text-align: left;
-  font-weight: normal;
-}
-
-th {
-  background-color: #f1ecdb;
-  font-weight: 600;
-}
-
-tbody tr:nth-child(even) {
-  background-color: #fdfbf5;
-}
-
-tbody tr:hover {
-  background-color: #f5f0e4;
-  transition: background-color 0.2s ease;
-}
-p {
-  text-align: center;
-}
-
+/* 💡 1:1 wie Dashboard */
 .table-wrapper {
   max-height: 300px;
   overflow-y: auto;
   border: 1px solid #e0dccc;
-  border-radius: 8px;
+  border-radius: 0.5rem;
 }
 
-.scroll-table {
-  border-collapse: collapse;
+.table-wrapper table {
   width: 100%;
-  min-width: 700px;
-  table-layout: fixed;
+  border-collapse: separate;
+  border-spacing: 0;
+  background-color: #fff;
 }
 
-.scroll-table th {
+.table-wrapper thead {
   position: sticky;
   top: 0;
   background-color: #f1ecdb;
-  z-index: 2;
+  z-index: 1;
+}
+
+.table-wrapper th,
+.table-wrapper td {
   padding: 0.75rem 1rem;
+  border: 1px solid #e0dccc;
+  text-align: left;
+  font-weight: 400;
+}
+
+.table-wrapper th {
   font-weight: 600;
-  border-bottom: 1px solid #e0dccc;
-  text-align: left;
 }
 
-
-.scroll-table tbody td {
-  padding: 0.75rem 1rem;
-  border-bottom: 1px solid #e0dccc;
-  background-color: #fff;
-  text-align: left;
-  word-wrap: break-word;
-}
-
-.scroll-table tbody tr:nth-child(even) td {
+/* Zeilenfarben */
+.table-wrapper tbody tr:nth-child(even) {
   background-color: #fdfbf5;
 }
 
-.scroll-table tbody tr:hover td {
+.table-wrapper tbody tr:hover {
   background-color: #f5f0e4;
   transition: background-color 0.2s ease;
 }
-
 </style>
-
-

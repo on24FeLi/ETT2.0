@@ -11,7 +11,6 @@ const userName = ref('')
 const passWord = ref('')
 const loginError = ref('')
 
-
 onMounted(() => {
   // Prüfe, ob im localStorage schon User gespeichert sind
   const savedUsers = localStorage.getItem('users');
@@ -24,6 +23,7 @@ onMounted(() => {
     users.push(...JSON.parse(savedUsers));
   }
 });
+
 function userLogin() {
   const user = users.find(
     u => u.email === userName.value && u.passwort === passWord.value)
@@ -40,8 +40,8 @@ function userLogin() {
 <template>
   <div class="wrapper">
     <div class="header-logo">
-  <img src="/LOGO_ETT.png" alt="ETT Logo" />
-</div>
+      <img src="/LOGO_ETT.png" alt="ETT Logo" />
+    </div>
     <main class="content">
       <uhrzeit class="clock-centered" /> 
       <div class="timer-box">
@@ -52,6 +52,8 @@ function userLogin() {
           <div class="buttons">
             <button @click="userLogin" id="login">Login</button>
           </div>
+          <!-- Fehleranzeige -->
+          <p v-if="loginError" class="error-message">{{ loginError }}</p>
         </div>
       </div>
     </main>
@@ -66,10 +68,9 @@ function userLogin() {
     flex-direction: column;
     min-height: 100vh;
     background-color: #F2EDDB;
-  }
+}
 h1 {
   color: #333;
- 
 }
 .content {
     flex: 1;
@@ -79,7 +80,7 @@ h1 {
     align-items: center;
     text-align: center;
     padding: 40px 20px;
-  }
+}
 main {
   display: flex;
   padding: 2rem;
@@ -87,7 +88,6 @@ main {
 .login {
   display: flex;
   flex-direction: column;
-
   align-items: center;
 }
 input {
@@ -114,9 +114,9 @@ button {
 
 button:hover {
     transform: scale(1.05);
-  }
+}
 
-  .timer-box {
+.timer-box {
   background-color: #F2EDDB;
   padding: 30px;
   border: 2px solid black;
@@ -157,4 +157,10 @@ button:hover {
   padding-right: 40px;
 }
 
+/* Fehlernachricht Style */
+.error-message {
+  color: red;
+  font-size: 14px;
+  margin-top: 10px;
+}
 </style>

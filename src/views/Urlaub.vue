@@ -18,6 +18,7 @@ const editingUrlaub = ref(null);
 onMounted(() => {
   if (userId) {
     urlaubsliste.value = getUrlaubeByUser(userId);
+      berechneUrlaubstage();
   }
 });
 
@@ -48,7 +49,27 @@ function clearEdit() {
 const reloadUrlaube = () => {
   urlaubsliste.value = getUrlaubeByUser(userId);
   urlaubslisteKey.value++; // erzwingt Kalender-Update
+    berechneUrlaubstage();
 };
+const JAHRESKONTINGENT = 30;
+const genommeneTage = ref(0);
+const verbleibendeTage = ref(JAHRESKONTINGENT);
+
+function berechneUrlaubstage() {
+  if (!userId) return;
+
+  const alleUrlaube = getUrlaubeByUser(userId);
+
+  const jahr = new Date().getFullYear();
+  const urlaubeImJahr = alleUrlaube.filter(u => 
+    new Date(u.start).getFullYear() === jahr || new Date(u.end).getFullYear() === jahr
+  );
+
+  const tage = urlaubeImJahr.reduce((sum, eintrag) => sum + eintrag.tage, 0);
+  genommeneTage.value = tage;
+  verbleibendeTage.value = JAHRESKONTINGENT - tage;
+}
+
 </script>
 
 <template>
@@ -56,9 +77,13 @@ const reloadUrlaube = () => {
     <header>
       <h1>Urlaub</h1>
       <navigation />
-    </header>
-
-    <div class="urlaub-container">
+    </header><div class="urlaub-container">
+      <div class="urlaub-left-column">
+<div class="urlaub-info-box">
+  <p><strong>Verbleibende Urlaubstage:</strong> {{ verbleibendeTage }}</p>
+  <p><strong>Bereits genommene Urlaubstage:</strong> {{ genommeneTage }}</p>
+</div>
+    
       <form class="urlaub-formular" @submit.prevent="handleSubmit">
         <label for="startdatum">Urlaubsbeginn</label>
         <input type="date" id="startdatum" v-model="startdatum" required>
@@ -71,7 +96,7 @@ const reloadUrlaube = () => {
 
         <button type="submit">Antrag senden</button>
       </form>
-
+</div>
       <div class="calendar-wrapper">
         <CleanKalenderansicht :urlaubsliste="urlaubsliste" :key="urlaubslisteKey" />
       </div>
@@ -138,21 +163,35 @@ header h1 {
   font-size: 2rem;
   padding: 0.2rem 1rem;
 }
-
+.urlaub-info-box {
+  border-radius: 10px;
+  padding: 1rem;
+  font-size: 1rem;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  margin-bottom: 1rem;
+}
 /* ======= CONTAINER ======= */
 .urlaub-container {
   display: flex;
   align-items: stretch; /* gleiche Höhe */
   gap: 2rem;
   max-width: 852px;
-  margin: 2rem auto; }
+  margin: 2rem auto; 
+height: auto;}
 
+.urlaub-left-column {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
 /* ======= FORMULAR ======= */
 .urlaub-formular {
-  background-color: #ffffff;
+   background-color: #ffffff;
   padding: 20px;
   border-radius: 10px;
   width: 100%;
+  flex: 1; /* damit es die Höhe auffüllt */
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   box-sizing: border-box;
   display: flex;

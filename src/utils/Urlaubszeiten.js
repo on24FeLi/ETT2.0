@@ -5,8 +5,16 @@ function saveUrlaube(urlaube) {
 function calculateTage(start, end) {
   const startDate = new Date(start);
   const endDate = new Date(end);
-  const diffInMs = endDate - startDate;
-  return Math.floor(diffInMs / (1000 * 60 * 60 * 24)) + 1;
+   let tage = 0;
+
+  for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
+    const day = d.getDay();
+    if (day !== 0 && day !== 6) { // 0 = Sonntag, 6 = Samstag
+      tage++;
+    }
+  }
+
+  return tage;
 }
 
 function addUrlaub(userId, start, end, kommentar) {

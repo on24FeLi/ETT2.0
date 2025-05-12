@@ -233,6 +233,7 @@ td {
   padding: 0.75rem 1rem;
   border: 1px solid #e0dccc;
   text-align: left;
+  font-weight: normal;
 }
 
 th {
